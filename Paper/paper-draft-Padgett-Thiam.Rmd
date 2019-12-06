@@ -79,15 +79,15 @@ This section describes the data sources and the data gathering process.
 
 ### Twitter
 
-Below is our token to access the Twitter API and start collecting tweets. 
+Below is our token to access the Twitter API and start collecting tweets. Note that these codes are fake, for security purposes.
 
 ```{r, eval=FALSE}
 create_token(
   app = "fcdd-course",
-  consumer_key = "7y8Xu96DRkBoLsdP8XbQJXTn9",
-  consumer_secret = "MCM7gcAfTJKwHks2yIRZaDZcODRQCJBusiYoZtobj4XvO7bvpV",
-  access_token = "967157671353864192-DvdUZcJN1ocpqx74YN2GwyejeIMR1Da",
-  access_secret = "KkCoMdH1vuivbWgH6IdDaDuiScNcxr389caRbhG2L2kXW"
+  consumer_key = "XXXXXXXXXXXXXXXXXXX",
+  consumer_secret = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  access_token = "XXXXXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXXXXX",
+  access_secret = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 )
 ```
 
