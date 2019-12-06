@@ -63,6 +63,8 @@ library(lubridate)
 library(quanteda)
 library(SentimentAnalysis)
 library(GGally)
+library(repmis)
+library(httr)
 ```
 
 ## Introduction
@@ -410,7 +412,11 @@ interest_over_time_all <- rbind(interest_over_time_pre, interest_over_time_post)
 Polling data was collected from RealClearPolitics, which aggregates weekly polls. We created a dataset using the RealClearPolitics average before and after the November 20 debate. Because the website changes often, and we only needed a small snapshot of the data, it was more efficient to clean the data in Excel and import to R than to use web scraping.
 
 ```{r}
-polling_data <- read_excel("G:/UMD/JPSM/Fall 2019/SURV727/Project/project polling data.xlsx", sheet=1)
+github_link <- "https://github.com/znpadgett/surv727_padgett_thiam/raw/master/Data/Project%20polling%20data.xlsx"
+temp_file <- tempfile(fileext = ".xlsx")
+req <- GET(github_link, 
+           write_disk(path = temp_file))
+polling_data <- readxl::read_excel(temp_file)
 ```
 
 
@@ -494,8 +500,8 @@ A visual of the proportion of tweets pre and post debate
 
 ```{r, include=FALSE}
 #USE THIS CHUNK TO BRING IN props_tab1 and props_tab2
-load("G:/UMD/JPSM/Fall 2019/SURV727/Project/props_tab1.RData")
-load("G:/UMD/JPSM/Fall 2019/SURV727/Project/props_tab2.RData")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab1.RData?raw=true")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab2.RData?raw=true")
 
 ```
 
@@ -530,7 +536,7 @@ props_tab2 %>%
 To explore the Google Trends data, we examined the location and density of searches for each candidate. We created a map showing our results. Because it was difficult to see the results for each candidate, we created a shiny app that allows users to toggle between candidates.
 ```{r, include=FALSE}
 #USE THIS CHUNK TO BRING IN gc_locations
-load("G:/UMD/JPSM/Fall 2019/SURV727/Project/gc_locations.RData")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/gc_locations.RData?raw=true")
 ```
 
 ```{r}
@@ -553,7 +559,7 @@ ggmap(us_map) +
 We also explored the number of hits pre- and post- debate for each candidate.
 ```{r, include=FALSE}
 #USE THIS CHUNK TO BRING IN interest_over_time_all
-load("G:/UMD/JPSM/Fall 2019/SURV727/Project/interest_over_time_all.RData")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/interest_over_time_all.RData?raw=true")
 ```
 
 ```{r}
@@ -582,8 +588,8 @@ First, we cleaned up and combined the three data sources for use in the Shiny ap
 
 ```{r, include=FALSE}
 #USE THIS CHUNK TO BRING IN pre_sent_pos and post_sent_pos
-load("G:/UMD/JPSM/Fall 2019/SURV727/Project/pre_sent_pos.RData")
-load("G:/UMD/JPSM/Fall 2019/SURV727/Project/post_sent_pos.RData")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/post_sent_pos.RData?raw=true")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/pre_sent_pos.RData?raw=true")
 ```
 
 ```{r}
