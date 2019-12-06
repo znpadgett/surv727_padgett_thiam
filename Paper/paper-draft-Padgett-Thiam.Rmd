@@ -357,10 +357,10 @@ post_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", "Harri
 
 
 ### Google Trends
-This section describes gathering the Google Trends data using the package gtrends. First, we register our Google API key. Then, we pull data for each candidate from the 2 days preceding and two days following the debate (November 18 through 22). We have to pull the data in two separate blocks, because gtrends only allows us to use five search terms at a time. We limit the location of searches to the US.
+This section describes gathering the Google Trends data using the package gtrends. First, we register our Google API key. Then, we pull data for each candidate from the 2 days preceding and two days following the debate (November 18 through 22). We have to pull the data in two separate blocks, because gtrends only allows us to use five search terms at a time. We limit the location of searches to the US. Please note that the key here is not a real API key, for security purposes.
 
 ```{r, eval=FALSE}
-register_google(key = "AIzaSyChFy9VXwWjDdXWWxWY2Qce_cRgaE6bNVM")
+register_google(key = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 res1 <- gtrends(c("Joe Biden", "Bernie Sanders", "Elizabeth Warren", "Kamala Harris", "Pete Buttigieg"), geo = "US", 
                 time = "2019-11-18 2019-11-22", low_search_volume = T)
 
