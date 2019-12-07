@@ -8,42 +8,74 @@ output:
     toc: yes
     df_print: kable
 references:
-- id: Wickham2014
-  title: Tidy Data
+- id: GayoAvello2013
+  title: A Meta-Analysis of State-of-the-Art Electoral Prediction From Twitter Data
   author:
-  - family: Wickham
-    given: Hadley
-  container-title: Journal of Statistical Software
-  volume: 59
-  issue: 10
-  page: 1-23
+  - family: Gayo-Avello
+    given: D.
+  container-title: Organization Studies
+  volume: 31
+  issue: 6
+  page: 211–248
   type: article-journal
   issued:
-    year: 2014
-- id: Baumer2017
-  title: Modern Data Science with R
+    year: 2013
+- id: Beauchamp2017
+  title: Predicting and Interpolating State-Level Polls Using Twitter Textual Data
   author:
-  - family: Baumer
-    given: Benjamin S.
-  - family: Kaplan
-    given: Daniel T.
-  - family: Horton
-    given: Nicholas J.
-  type: book
-  publisher: Chapman \& Hall/CRC Press.
+  - family: Beauchamp
+    given: N.
+  container-title: American Journal of Political Science 
+  volume: 61
+  issue: 2
+  type: article-journal
+  issued:
+    year: 2017
+- id: Gaurav2013
+  title: Leveraging Candidate Popularity on Twitter to Predict Election Outcome
+  author:
+  - family: Gaurav
+    given: M.
+  - family: Srivastava
+    given: A.
+  - family: Kumar
+    given: A.
+  - family: Miller
+    given: S.
+  container-title: Proceedings of the 7th Workshop on Social Network Mining and Analysis
+  type: article-journal
+  issued:
+    year: 2013
+- id: Kassraie2017
+  title: Election Vote Share Prediction using a Sentiment-based Fusion of Twitter Data with Google Trends and Online Polls
+  author:
+  - family: Kassraie
+    given: P.
+  - family: Modirshanechi
+    given: A.
+  - family: Aghajan
+    given: H.
+  container-title: Proceedings of the 6th International Conference on Data Science, Technology and Applications
+  type: article-journal
+  issued:
+    year: 2017
+- id: Salunkhe2017
+  title: Twitter Based Election Prediction and Analysis
+  author:
+  - family: Salunkhe
+    given: P.
+  - family: Deshmukh
+    given: S.
+  container-title: International Research Journal of Engineering and Technology
+  volume: 4
+  issue: 10
+  type: article-journal
   issued:
     year: 2017
 ---
 
 TO DO:
-- write intro, results, and discussion sections
-- save the following datasets to github and write code in designated chunks to bring them in:
-    props_tab1
-    props_tab2
-    gc_locations
-    interest_over_time_all
-    pre_sent_pos
-    post_sent_pos
+- write results, and discussion sections
 - create presentation
 
 
@@ -69,9 +101,11 @@ library(httr)
 
 ## Introduction
 
-This section outlines the research idea. We can also cite related work here [@Wickham2014; @Baumer2017].
+Twitter and Google Trends are becoming increasingly popular tools for social science researchers. They represent an easily accessible source of large amounts of data, which has become advantageous as survey response rates decline and costs rise. Researchers interested in predicting election results have begun looking to Twitter data to replace or supplement traditional election polls, with mixed results [@GayoAvello2013]. 
 
-Note that compiled term paper (the PDF) is supposed to be more text-centered than the RMarkdown documents we used in class, i.e. the text sections are more detailed and big or redundant code chunks can be hidden.
+Recently, there have been studies using sentiment analysis of Twitter data to predict election outcomes in India [@Salunkhe2017], to predict state-level polling results in the U.S. [@Beauchamp2017], and to predict the winners of three presidential elections in Latin America [@Gaurav2013]. Beauchamp (2017) found that Twitter data may be useful in making state-level campaign strategy decisions. Additionally, a recent study used Google Trends and Twitter data to predict the 2016 U.S. election outcomes with only 1% error [@Kassraie2017]. 
+
+We are interested in whether Twitter data and Google trends data could be used to supplement polling results, by providing real-time information to candidates while they wait for polling data to come in. For example, candidates may be interested in understanding how public opinion has shifted immediately after a debate in order to run a more agile campaign. This project is an exploratory analysis of Twitter and Google Trends data to see if pre- and post-debate polling data during the 2020 U.S. Democratic primary election aligns with these real-time sources. 
 
 ## Data
 
@@ -96,7 +130,7 @@ create_token(
 Using the search_tweets function in the rtweets package, we will be quering tweets with the keywords specified below. We limited our tweets pool to November 20th and November 21st. The reasonning behind this is to get a feel post and pre debate.  
 
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, tidy=TRUE}
 
 dem <- search_tweets("#democrats OR #candidates OR #election2020 OR #BIDEN OR #sanders OR #warren OR #harris 
                      OR #buttigieg OR #steyer OR #yang OR #booker OR #klobuchar OR #gabbard   
@@ -131,9 +165,9 @@ tweets <- rbind(df1, df2)
 
 ```
 
-Next, we seperate the tweets by candidates in order to do the analysis at the candidate level. It's important to note that one tweets can be addressed to multiple candidates. In that case, the tweet will be found in the each of those candidate dataset. 
+Next, we seperate the tweets by candidates in order to do the analysis at the candidate level. It's important to note that one tweets can be addressed to multiple candidates. In that case, the tweet will be found in the each of those candidate dataset. The code below exemplifies this step of the cleaning process.
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, tidy=TRUE}
 tweets$BS <-(str_detect(tweets$text, regex("#Sanders|@BernieSanders", ignore_case = TRUE)))
 tweets$KH <-(str_detect(tweets$text, regex("#harris |@KamalaHarris",  ignore_case = TRUE)))
 tweets$JB <-(str_detect(tweets$text, regex("#biden |@JoeBiden", ignore_case = TRUE)))
@@ -148,7 +182,7 @@ tweets$TG <-(str_detect(tweets$text, regex("#gabbard |@TulsiGabbard", ignore_cas
 
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 df1$BS <-(str_detect(df1$text, regex("#Sanders|@BernieSanders", ignore_case = TRUE)))
 df1$KH <-(str_detect(df1$text, regex("#harris |@KamalaHarris",  ignore_case = TRUE)))
 df1$JB <-(str_detect(df1$text, regex("#biden |@JoeBiden", ignore_case = TRUE)))
@@ -163,7 +197,7 @@ df1$TG <-(str_detect(df1$text, regex("#gabbard |@TulsiGabbard", ignore_case = TR
 
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 df2$BS <-(str_detect(df2$text, regex("#Sanders|@BernieSanders", ignore_case = TRUE)))
 df2$KH <-(str_detect(df2$text, regex("#harris |@KamalaHarris",  ignore_case = TRUE)))
 df2$JB <-(str_detect(df2$text, regex("#biden |@JoeBiden", ignore_case = TRUE)))
@@ -192,7 +226,7 @@ df2 <- df2 %>%
 ```
 
 All the tweets received before 9 p.m. on November 20th are accounted for in the pre-debate dataset and all tweets from 11 p.m. on November 20th to the next day are in the post-debate dataset. Note that tweets during the debate( 9 - 11 p.m are ignored)
-```{r, eval=FALSE}
+```{r, eval=FALSE, tidy=TRUE}
 pre_debate <- tweets %>%
               filter(date(date) == "2019-11-20" & hour(date) < 21 )
 
@@ -207,7 +241,7 @@ post_debate <- post_debate %>% select(-date, -created_at)
 #### Sentiment Analysis
 Sentiment analysis of the tweets will performed for only 5 candidates. 
 
-First we need to prep the tweets by removing all non-words such as emojis and use the sentiment analysis package for analysis. Althought the sentiment analysis packae uses 5 dictionnairies, we will only look at the results from the GI dictionnary. For the pre-debate tweets sentimeent we used all the tweets from the dataset; however for the post-debate analysis, we sampled from the dataset due to volume and processing error.   
+First we need to prep the tweets by removing all non-words such as emojis and use the sentiment analysis package for analysis. Althought the sentiment analysis packae uses 5 dictionnairies, we will only look at the results from the GI dictionnary. For the pre-debate tweets sentimeent we used all the tweets from the dataset; however for the post-debate analysis, we sampled from the dataset due to volume and processing error. The code below exemplifies this process.   
 ```{r, eval=FALSE}
 bs <- pre_debate %>%
       filter (BS == "TRUE")
@@ -220,8 +254,9 @@ usableText<- iconv(usableText, "UTF-8","ASCII",  sub="byte")
 
 sentiments_bs = analyzeSentiment(as.character(usableText))
 
-##
+```
 
+```{r, eval=FALSE, include=FALSE}
 bs_post <- post_debate %>%
       filter (BS == "TRUE")
 
@@ -236,7 +271,7 @@ sentiments_bs_post = analyzeSentiment(as.character(usableText))
 
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 kh <- pre_debate %>%
       filter (KH == "TRUE")
 
@@ -263,7 +298,7 @@ sentiments_kh_post = analyzeSentiment(as.character(usableText))
 ```
 
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 jb <- pre_debate %>%
       filter (JB == "TRUE")
 
@@ -288,7 +323,7 @@ sentiments_jb_post = analyzeSentiment(as.character(usableText))
 
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 ew <- pre_debate %>%
       filter (EW == "TRUE")
 
@@ -313,7 +348,7 @@ sentiments_ew_post = analyzeSentiment(as.character(usableText))
 
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 pb <- pre_debate %>%
       filter (PB == "TRUE")
 
@@ -338,7 +373,7 @@ usableText<- iconv(usableText, "UTF-8","ASCII",  sub="byte")
 sentiments_pb_post = analyzeSentiment(as.character(usableText))
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, tidy=TRUE}
 pre_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", "Harris", "Buttigieg"), 
                        "Positive" =c((sum(sentiments_jb$PositivityGI))/27477,
                                       (sum(sentiments_bs$PositivityGI))/31603,                                                                  (sum(sentiments_ew$PositivityGI))/18628,
@@ -346,7 +381,7 @@ pre_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", "Harris
                                       (sum(sentiments_pb$PositivityGI))/27242))
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, include=FALSE}
 post_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", "Harris", "Buttigieg"), 
                        "Positive" =c((sum(sentiments_jb_post$PositivityGI))/27477,
                                       (sum(sentiments_bs_post$PositivityGI))/31603,                                                             (sum(sentiments_ew_post$PositivityGI))/18628,
@@ -359,7 +394,7 @@ post_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", "Harri
 ### Google Trends
 This section describes gathering the Google Trends data using the package gtrends. First, we register our Google API key. Then, we pull data for each candidate from the 2 days preceding and two days following the debate (November 18 through 22). We have to pull the data in two separate blocks, because gtrends only allows us to use five search terms at a time. We limit the location of searches to the US. Please note that the key here is not a real API key, for security purposes.
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, tidy=TRUE}
 register_google(key = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 res1 <- gtrends(c("Joe Biden", "Bernie Sanders", "Elizabeth Warren", "Kamala Harris", "Pete Buttigieg"), geo = "US", 
                 time = "2019-11-18 2019-11-22", low_search_volume = T)
@@ -411,7 +446,7 @@ interest_over_time_all <- rbind(interest_over_time_pre, interest_over_time_post)
 
 Polling data was collected from RealClearPolitics, which aggregates weekly polls. We created a dataset using the RealClearPolitics average before and after the November 20 debate. Because the website changes often, and we only needed a small snapshot of the data, it was more efficient to clean the data in Excel and import to R than to use web scraping.
 
-```{r}
+```{r, tidy=TRUE}
 github_link <- "https://github.com/znpadgett/surv727_padgett_thiam/raw/master/Data/Project%20polling%20data.xlsx"
 temp_file <- tempfile(fileext = ".xlsx")
 req <- GET(github_link, 
@@ -539,12 +574,14 @@ To explore the Google Trends data, we examined the location and density of searc
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/gc_locations.RData?raw=true")
 ```
 
-```{r}
+```{r, message=FALSE, warning=FALSE, results="hide", fig.show="hide"}
 #get map
 us <- c(left = -125, bottom = 25.75, right = -67, top = 49)
 us_map <- get_stamenmap(us, zoom = 5, maptype = "toner-lite")
 ggmap(us_map) 
+```
 
+```{r, message=FALSE, warning=FALSE}
 #clean data for mapping
 trends_map <-
   gc_locations %>%
@@ -562,7 +599,7 @@ We also explored the number of hits pre- and post- debate for each candidate.
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/interest_over_time_all.RData?raw=true")
 ```
 
-```{r}
+```{r, tidy=TRUE}
 interest_over_time_all %>%
   group_by(keyword, Pre_post) %>%
   summarise(total_hits=sum(hits)) %>%
@@ -573,7 +610,7 @@ interest_over_time_all %>%
 #### Polling Data
 
 For the polling data, we looked at the pre- and post-debate polling numbers for each candidate.
-```{r}
+```{r, tidy=TRUE}
 polling_data %>%
   group_by(Candidate, Pre_post) %>%
   ggplot() +
@@ -592,7 +629,7 @@ source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/pre_sent_pos.RData?raw=true")
 ```
 
-```{r}
+```{r, tidy=TRUE, warning=FALSE, message=FALSE}
 #clean data
 gtrends <-
   interest_over_time_all %>%
@@ -629,7 +666,7 @@ all_data <- rbind(poll, gtrends, twitter)
 ```
 
 Then, we created a shiny app, which can be viewed by accessing the following site: ________________.
-```{r}
+```{r, eval=FALSE, tidy=TRUE}
 # Define UI
 ui <- fluidPage(
   
