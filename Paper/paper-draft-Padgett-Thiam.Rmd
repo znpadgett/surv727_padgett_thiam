@@ -3,6 +3,8 @@ title: "Fundamentals of Computing and Data Display"
 subtitle: "Term paper template"
 author: "Author"
 date: "`r Sys.Date()`"
+fontsize: 12pt
+text-align: left
 output:
   pdf_document:
     toc: yes
@@ -79,7 +81,7 @@ TO DO:
 - create presentation
 
 
-```{r, include = FALSE}
+```{r, echo = FALSE, include=FALSE}
 library(knitr)
 library(tidyverse)
 library(gtrendsR)
@@ -97,6 +99,10 @@ library(SentimentAnalysis)
 library(GGally)
 library(repmis)
 library(httr)
+```
+
+```{r, message="FALSE", warning=FALSE, results="hide", include=FALSE}
+opts_chunk$set(tidy.opts=list(width=60),tidy=TRUE)
 ```
 
 ## Introduction
@@ -132,10 +138,16 @@ Using the search_tweets function in the rtweets package, we will be quering twee
 
 ```{r, eval=FALSE, tidy=TRUE}
 
-dem <- search_tweets("#democrats OR #candidates OR #election2020 OR #BIDEN OR #sanders OR #warren OR #harris 
-                     OR #buttigieg OR #steyer OR #yang OR #booker OR #klobuchar OR #gabbard   
-                     OR @KamalaHarris OR @JoeBiden OR @BernieSanders OR @ewarren OR @PeteButtigieg 
-                     OR @TomSteyer OR @AndrewYang OR @BookerCory OR @amyklobuchar OR @TulsiGabbard ",  since='2019-11-20', until='2019-11-21', n= 500000,  retryonratelimit = TRUE, verbose = TRUE)
+dem <- search_tweets("#democrats OR #candidates OR #election2020 OR #BIDEN 
+                     OR #sanders OR #warren OR #harris 
+                     OR #buttigieg OR #steyer OR #yang OR #booker 
+                     OR #klobuchar OR #gabbard   
+                     OR @KamalaHarris OR @JoeBiden OR @BernieSanders 
+                     OR @ewarren OR @PeteButtigieg 
+                     OR @TomSteyer OR @AndrewYang OR @BookerCory 
+                     OR @amyklobuchar OR @TulsiGabbard ",  since='2019-11-20', 
+                     until='2019-11-21', n= 500000,  
+                     retryonratelimit = TRUE, verbose = TRUE)
 ```
 
 #### Data Cleaning
@@ -150,12 +162,16 @@ df2 <- dem2[myvars]
                     
 ```{r, eval=FALSE}
 df1 <- df1 %>%
-      mutate( ukraine = (str_detect(df1$text, regex("Ukraine", ignore_case = TRUE)))) %>%
+      mutate( ukraine = (str_detect(df1$text, 
+                                    regex("Ukraine", 
+                                          ignore_case = TRUE)))) %>%
       filter(ukraine=="FALSE") %>%
       select(-ukraine)
 
 df2 <- df2 %>%
-      mutate( ukraine = (str_detect(df2$text, regex("Ukraine", ignore_case = TRUE)))) %>%
+      mutate( ukraine = (str_detect(df2$text, 
+                                    regex("Ukraine", 
+                                          ignore_case = TRUE)))) %>%
       filter(ukraine=="FALSE") %>%
       select(-ukraine)
 ```
@@ -168,18 +184,36 @@ tweets <- rbind(df1, df2)
 Next, we seperate the tweets by candidates in order to do the analysis at the candidate level. It's important to note that one tweets can be addressed to multiple candidates. In that case, the tweet will be found in the each of those candidate dataset. The code below exemplifies this step of the cleaning process.
 
 ```{r, eval=FALSE, tidy=TRUE}
-tweets$BS <-(str_detect(tweets$text, regex("#Sanders|@BernieSanders", ignore_case = TRUE)))
-tweets$KH <-(str_detect(tweets$text, regex("#harris |@KamalaHarris",  ignore_case = TRUE)))
-tweets$JB <-(str_detect(tweets$text, regex("#biden |@JoeBiden", ignore_case = TRUE)))
-tweets$EW <-(str_detect(tweets$text, regex("#warren |@ewarren", ignore_case = TRUE)))
-tweets$PB <-(str_detect(tweets$text, regex("#buttigieg|@PeteButtigieg", ignore_case = TRUE)))
-tweets$TS <-(str_detect(tweets$text, regex("#steyer | @TomSteyer", ignore_case = TRUE)))
-tweets$AY <-(str_detect(tweets$text, regex("#yang| @AndrewYang", ignore_case = TRUE)))
-tweets$BC <-(str_detect(tweets$text, regex("#booker | @BookerCory", ignore_case = TRUE)))
-tweets$AK <-(str_detect(tweets$text, regex("#klobuchar | @amyklobuchar", ignore_case = TRUE)))
-tweets$TG <-(str_detect(tweets$text, regex("#gabbard |@TulsiGabbard", ignore_case = TRUE)))
-
-
+tweets$BS <-(str_detect(tweets$text, 
+                        regex("#Sanders|@BernieSanders", 
+                              ignore_case = TRUE)))
+tweets$KH <-(str_detect(tweets$text, 
+                        regex("#harris |@KamalaHarris",  
+                              ignore_case = TRUE)))
+tweets$JB <-(str_detect(tweets$text, 
+                        regex("#biden |@JoeBiden", 
+                              ignore_case = TRUE)))
+tweets$EW <-(str_detect(tweets$text, 
+                        regex("#warren |@ewarren", 
+                              ignore_case = TRUE)))
+tweets$PB <-(str_detect(tweets$text, 
+                        regex("#buttigieg|@PeteButtigieg", 
+                              ignore_case = TRUE)))
+tweets$TS <-(str_detect(tweets$text, 
+                        regex("#steyer | @TomSteyer", 
+                              ignore_case = TRUE)))
+tweets$AY <-(str_detect(tweets$text, 
+                        regex("#yang| @AndrewYang", 
+                              ignore_case = TRUE)))
+tweets$BC <-(str_detect(tweets$text, 
+                        regex("#booker | @BookerCory", 
+                              ignore_case = TRUE)))
+tweets$AK <-(str_detect(tweets$text, 
+                        regex("#klobuchar | @amyklobuchar", 
+                              ignore_case = TRUE)))
+tweets$TG <-(str_detect(tweets$text, 
+                        regex("#gabbard |@TulsiGabbard", 
+                              ignore_case = TRUE)))
 ```
 
 ```{r, eval=FALSE, include=FALSE}
@@ -231,7 +265,8 @@ pre_debate <- tweets %>%
               filter(date(date) == "2019-11-20" & hour(date) < 21 )
 
 post_debate <- tweets %>%
-              filter(date(date) == "2019-11-20" & hour(date) >= 23 | date(date) == "2019-11-21"  )
+              filter(date(date) == "2019-11-20" & hour(date) >= 23 | 
+                       date(date) == "2019-11-21"  )
 
 
 pre_debate <- pre_debate %>% select(-date, -created_at)
@@ -374,7 +409,11 @@ sentiments_pb_post = analyzeSentiment(as.character(usableText))
 ```
 
 ```{r, eval=FALSE, tidy=TRUE}
-pre_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", "Harris", "Buttigieg"), 
+pre_sent_pos <- data.frame("Candidate" = c("Biden", 
+                                           "Sanders", 
+                                           "Warren", 
+                                           "Harris", 
+                                           "Buttigieg"), 
                        "Positive" =c((sum(sentiments_jb$PositivityGI))/27477,
                                       (sum(sentiments_bs$PositivityGI))/31603,                                                                  (sum(sentiments_ew$PositivityGI))/18628,
                                      (sum(sentiments_kh$PositivityGI))/16362,
@@ -396,10 +435,13 @@ This section describes gathering the Google Trends data using the package gtrend
 
 ```{r, eval=FALSE, tidy=TRUE}
 register_google(key = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-res1 <- gtrends(c("Joe Biden", "Bernie Sanders", "Elizabeth Warren", "Kamala Harris", "Pete Buttigieg"), geo = "US", 
+res1 <- gtrends(c("Joe Biden", "Bernie Sanders", 
+                  "Elizabeth Warren", "Kamala Harris", 
+                  "Pete Buttigieg"), geo = "US", 
                 time = "2019-11-18 2019-11-22", low_search_volume = T)
 
-res2 <- gtrends(c("Tom Steyer", "Andrew Yang", "Cory Booker", "Amy Klobuchar", "Tulsi Gabbard"), geo = "US", 
+res2 <- gtrends(c("Tom Steyer", "Andrew Yang", "Cory Booker", 
+                  "Amy Klobuchar", "Tulsi Gabbard"), geo = "US", 
                 time = "2019-11-18 2019-11-22", low_search_volume = T)
 ```
 
@@ -540,35 +582,33 @@ source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data
 
 ```
 
-```{r}
+```{r, fig.cap="Pre-debate Mentions in Tweets, by Candidate"}
 props_tab1 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
     labs(x = "Democatric Party Canditates", 
        y = "Number of Tweets", 
-       title = "Pre Debate candidates mentions in Tweets", 
        caption = "Source: Twiiter") 
 
 ```
 
 
 ###### Post-debate number of tweets 
-```{r}
+```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate"}
 props_tab2 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(Variable, -Count), y=Count, fill = Variable)) +
     labs(x = "Democatric Party Canditates", 
        y = "Number of Tweets", 
-       title = "Post Debate candidates mentions in Tweets", 
        caption = "Source: Twiiter") 
 
 ```
 
 #### Google Trends
 
-To explore the Google Trends data, we examined the location and density of searches for each candidate. We created a map showing our results. Because it was difficult to see the results for each candidate, we created a shiny app that allows users to toggle between candidates.
+To explore the Google Trends data, we examined the location and density of searches for each candidate. We created a map showing our results. Because it was difficult to see the results for each candidate overlaid on one map, we added a facet wrap to show each individual candidate.
 ```{r, include=FALSE}
 #USE THIS CHUNK TO BRING IN gc_locations
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/gc_locations.RData?raw=true")
@@ -581,16 +621,22 @@ us_map <- get_stamenmap(us, zoom = 5, maptype = "toner-lite")
 ggmap(us_map) 
 ```
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.height=10, fig.width=12, fig.cap="Map of Google Trends Hits, by Candidate"}
 #clean data for mapping
 trends_map <-
   gc_locations %>%
   group_by(keyword, location) %>%
-  mutate(total=sum(hits))
+  mutate("Hits"=sum(hits), Candidate=keyword)
 
 #generate map
 ggmap(us_map) + 
-  geom_point(data = trends_map, aes(x = lon, y = lat, size=total, color=keyword), alpha = 0.2)
+  geom_point(data = trends_map, aes(x = lon, y = lat, size=Hits, color=Candidate), 
+             alpha = 0.2) +
+  theme(axis.line=element_blank(),axis.text.x=element_blank(),
+          axis.text.y=element_blank(),axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank()) +
+  facet_wrap("Candidate", shrink=FALSE)
 ```
 
 We also explored the number of hits pre- and post- debate for each candidate.
@@ -599,22 +645,38 @@ We also explored the number of hits pre- and post- debate for each candidate.
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/interest_over_time_all.RData?raw=true")
 ```
 
-```{r, tidy=TRUE}
+```{r, tidy=TRUE, fig.cap="Pre- and Post-debate Google Trends Data, by Candidate"}
+interest_over_time_all$Pre_post <- factor(interest_over_time_all$Pre_post, 
+                                          levels = c("Pre-debate", "Post-debate"))
+
 interest_over_time_all %>%
   group_by(keyword, Pre_post) %>%
-  summarise(total_hits=sum(hits)) %>%
+  summarise(avg_hits=mean(hits)) %>%
   ggplot() +
-  geom_col(mapping = aes(x=reorder(keyword, -total_hits), y=total_hits, fill=Pre_post), color="black")
+  geom_col(mapping = aes(x=reorder(keyword, -avg_hits), 
+                         y=avg_hits, fill=Pre_post), color="black", 
+           position="dodge") +
+  xlab("Candidate") + ylab("Hits") +
+  scale_fill_discrete(name = "Timeframe") +
+  theme(axis.text.x = element_text(angle=35))
+  
 ```
 
 #### Polling Data
 
 For the polling data, we looked at the pre- and post-debate polling numbers for each candidate.
-```{r, tidy=TRUE}
+```{r, tidy=TRUE, fig.cap="Pre- and Post-debate Polling Data, by Candidate"}
+polling_data$Pre_post <- factor(polling_data$Pre_post, levels = c("Pre-debate", "Post-debate"))
+
 polling_data %>%
   group_by(Candidate, Pre_post) %>%
+  filter(Candidate!="Bennet", Candidate!="Bloomberg") %>%
   ggplot() +
-    geom_col(mapping = aes(x=reorder(Candidate, -Percentage), y=Percentage, fill=Pre_post), color="black",   position="dodge")
+    geom_col(mapping = aes(x=reorder(Candidate, -Percentage), y=Percentage, 
+                           fill=Pre_post), color="black",   position="dodge") +
+  xlab("Candidate") + ylab("Percentage") +
+  scale_fill_discrete(name = "Timeframe") +
+  theme(axis.text.x = element_text(angle=35))
 ```
 
 ### Analysis
@@ -643,11 +705,13 @@ poll <-
   mutate(Data="Polling") %>%
   group_by(Candidate, Pre_post, Data)
 
-twitter_data <- data.frame("Candidate" = c("Joe Biden", "Bernie Sanders", "Elizabeth Warren", 
-                                           "Kamala Harris", "Pete Buttigieg", "Joe Biden", 
-                                           "Bernie Sanders", "Elizabeth Warren", "Kamala Harris", 
-                                           "Pete Buttigieg"),                            
-                           "Pre_post" =c("Pre-debate","Pre-debate","Pre-debate","Pre-debate","Pre-debate",                            "Post-debate","Post-debate","Post-debate","Post-debate","Post-debate"),
+twitter_data <- data.frame("Candidate" = c("Joe Biden", "Bernie Sanders", 
+                                           "Elizabeth Warren", "Kamala Harris", 
+                                           "Pete Buttigieg", "Joe Biden", 
+                                           "Bernie Sanders", "Elizabeth Warren", 
+                                           "Kamala Harris", "Pete Buttigieg"),                            
+                           "Pre_post" =c("Pre-debate","Pre-debate",
+                                         "Pre-debate","Pre-debate","Pre-debate",                            "Post-debate","Post-debate","Post-debate","Post-debate","Post-debate"),
                    "Data" = c("Twitter", "Twitter","Twitter","Twitter","Twitter",
                               "Twitter","Twitter","Twitter","Twitter","Twitter"), 
                   "Percentage"=c(pre_sent_pos$Positive[1],pre_sent_pos$Positive[2],
@@ -663,9 +727,12 @@ twitter <-
   mutate(Percentage=Percentage*100)
 
 all_data <- rbind(poll, gtrends, twitter)
+
+all_data$Pre_post <- factor(all_data$Pre_post, levels = c("Pre-debate", 
+                                                          "Post-debate"))
 ```
 
-Then, we created a shiny app, which can be viewed by accessing the following site: ________________.
+Then, we created a shiny app, which can be viewed by running the following code:
 ```{r, eval=FALSE, tidy=TRUE}
 # Define UI
 ui <- fluidPage(
@@ -678,7 +745,8 @@ ui <- fluidPage(
     sidebarPanel(
       selectInput(inputId = "Candidate",                   
                   label = "Candidate",                  
-                  choices = c("Joe Biden", "Pete Buttigieg", "Kamala Harris", "Bernie Sanders", "Elizabeth Warren"),                   
+                  choices = c("Joe Biden", "Pete Buttigieg", "Kamala Harris", 
+                              "Bernie Sanders", "Elizabeth Warren"),                   
                   selected = "Joe Biden"),
       selectInput(inputId = "Data",
                   label = "Data Type",
@@ -701,7 +769,9 @@ server <- function(input, output) {
       filter(Candidate == input$Candidate, Data == input$Data) %>%
       ggplot() +
       geom_col(mapping = aes(x=Pre_post, y=Percentage, fill=input$Candidate)) +
-      ylim(0,100)
+      ylim(0,100) +
+      xlab("Timeframe") + ylab("Percentage") +
+      theme(legend.position = "none")
   })
 }
 
