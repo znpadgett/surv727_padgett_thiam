@@ -1,7 +1,7 @@
 ---
-title: "Fundamentals of Computing and Data Display"
-subtitle: "Term paper template"
-author: "Author"
+title: "Pre- and Post-Debate Democratic Primary Data: Twitter, Google Trends, and Polls"
+subtitle: "Fundamentals of Computing and Data Display, Fall 2019"
+author: "Zoe Padgett and Fatou Thiam"
 date: "`r Sys.Date()`"
 fontsize: 12pt
 text-align: left
