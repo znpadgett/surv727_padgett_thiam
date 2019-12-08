@@ -55,7 +55,7 @@ props_tab1 %>%
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
     labs(x = "Democatric Party Canditates", 
        y = "Number of Tweets", 
-       caption = "Source: Twiiter") 
+       caption = "Source: Twitter") 
 ```
 
 ## Post-debate number of tweets 
@@ -63,10 +63,35 @@ props_tab1 %>%
 props_tab2 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
-  geom_col(mapping = aes(x = reorder(Variable, -Count), y=Count, fill = Variable)) +
+  geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
     labs(x = "Democatric Party Canditates", 
        y = "Number of Tweets", 
-       caption = "Source: Twiiter") 
+       title = "Post Debate candidates mentions in Tweets", 
+       caption = "Source: Twitter")
+      
+```
+
+## Tweets location pre-debate 
+```{r, fig.cap="Pre-debate Mentions in Tweets, by Candidate & location"}
+
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
+    labs(x = "Democatric Party Canditates", 
+       y = "Number of Tweets", 
+       title = "Post Debate candidates mentions in Tweets", 
+       caption = "Source: Twitter")
+      
+```
+
+## Tweets location post-debate 
+```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate & location"}
+
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
+    labs(x = "Democatric Party Canditates", 
+       y = "Number of Tweets", 
+       title = "Post Debate candidates mentions in Tweets", 
+       caption = "Source: Twitter")
       
 ```
 
@@ -226,4 +251,6 @@ shinyApp(ui = ui, server = server)
 
 
 ## Conclusion
+
+
 
