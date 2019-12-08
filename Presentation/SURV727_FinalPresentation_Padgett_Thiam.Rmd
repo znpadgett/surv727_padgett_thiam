@@ -72,26 +72,34 @@ props_tab2 %>%
 ```
 
 ## Tweets location pre-debate 
-```{r, eval=FALSE, fig.cap="Pre-debate Mentions in Tweets, by Candidate & location"}
+```{r, fig.cap="Pre-debate Mentions in Tweets, by Candidate & location"}
 
+ loc_pre_all %>%
+  mutate(Location = loc) %>%
+  group_by(Candidate, Location) %>%
+  summarise(total = n()) %>%
   ggplot() +
-  geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
-    labs(x = "Democratic Party Candidates", 
+  geom_col(mapping = aes(x = reorder(Candidate, -total), y=total, fill = Location)) +
+    labs(x = "Democatric Party Canditates", 
        y = "Number of Tweets", 
-       title = "Post Debate candidates mentions in Tweets", 
-       caption = "Source: Twitter")
+       title = "Pre Debate candidates mentions in Tweets by location", 
+       caption = "Source: Twiiter") 
       
 ```
 
 ## Tweets location post-debate 
-```{r, eval=FALSE, fig.cap="Post-debate Mentions in Tweets, by Candidate & location"}
+```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate & location"}
 
+ loc_post_all %>%
+  mutate(Location = loc) %>%
+  group_by(Candidate, Location) %>%
+  summarise(total = n()) %>%
   ggplot() +
-  geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
-    labs(x = "Democratic Party Candidates", 
+  geom_col(mapping = aes(x = reorder(Candidate, -total), y=total, fill = Location)) +
+    labs(x = "Democatric Party Canditates", 
        y = "Number of Tweets", 
-       title = "Post Debate candidates mentions in Tweets", 
-       caption = "Source: Twitter")
+       title = "Post Debate candidates mentions in Tweets by location", 
+       caption = "Source: Twiiter") 
       
 ```
 
