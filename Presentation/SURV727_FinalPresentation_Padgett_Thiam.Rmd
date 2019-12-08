@@ -50,7 +50,7 @@ When you click the **Knit** button a document will be generated that includes bo
 ## Google Trends Map
 
 ```{r, echo=FALSE, message=FALSE}
-image_read("https://github.com/znpadgett/surv727_padgett_thiam/raw/master/Paper/gtrends_map.png")
+image_read("https://github.com/znpadgett/surv727_padgett_thiam/raw/master/Presentation/gtrends_map.png")
 ```
 
 ## Candidate Search Popularity

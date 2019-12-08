@@ -668,11 +668,11 @@ trends_map <-
 #generate map
 ggmap(us_map) + 
   geom_point(data = trends_map, aes(x = lon, y = lat, size=Hits, color=Candidate), 
-             alpha = 0.2) +
+               alpha = 0.2) +
   theme(axis.line=element_blank(),axis.text.x=element_blank(),
-          axis.text.y=element_blank(),axis.ticks=element_blank(),
-          axis.title.x=element_blank(),
-          axis.title.y=element_blank()) +
+            axis.text.y=element_blank(),axis.ticks=element_blank(),
+            axis.title.x=element_blank(),
+            axis.title.y=element_blank()) +
   facet_wrap("Candidate", shrink=FALSE)
 ```
 
