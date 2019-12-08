@@ -40,13 +40,14 @@ library(magick)
 - Separated the 1.3 million tweets after removing irrelevant tweets in 2 groups: pre and post debate
 - Generated maps by number of tweets per candidate and ran sentiment analysis for 5 candidates
 
-### Number of Tweets 
+
 ```{r, include=FALSE}
 #USE THIS CHUNK TO BRING IN props_tab1 and props_tab2
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab1.RData?raw=true")
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab2.RData?raw=true")
 ```
-### Pre-debate number of tweets 
+
+## Pre-debate number of tweets 
 ```{r, fig.cap="Pre-debate Mentions in Tweets, by Candidate"}
 props_tab1 %>%
   filter(Cat == "TRUE") %>%
@@ -57,7 +58,7 @@ props_tab1 %>%
        caption = "Source: Twiiter") 
 ```
 
-### Post-debate number of tweets 
+## Post-debate number of tweets 
 ```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate"}
 props_tab2 %>%
   filter(Cat == "TRUE") %>%
