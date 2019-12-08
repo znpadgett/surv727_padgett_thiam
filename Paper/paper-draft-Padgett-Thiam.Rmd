@@ -74,11 +74,50 @@ references:
   type: article-journal
   issued:
     year: 2017
+- id: Gtrendscite   
+  title: "gtrendsR: Perform and Display Google Trends Queries"
+  author:
+  - family: Massicotte
+    given: P.
+  - family: Eddelbuettel
+    given: D.
+  issued:
+    year: 2019
+  note: R package version 1.4.4.9000
+  url: https://github.com/PMassicotte/gtrendsR
+- id: shinycite
+  title: "shiny: Web Application Framework for R"
+  author:
+  - family: Chang
+    given: W.
+  - family: Cheng 
+    given: J.
+  - family: Allaire
+    given: J.
+  - family: Xie
+    given: Y. 
+  - family: McPherson
+    given: J.
+  issued:
+    year: 2019
+  note: R package version 1.4.0
+  url: https://CRAN.R-project.org/package=shiny
+- id: mapcite
+  title: "ggmap: Spatial Visualization with ggplot2"
+  author:
+  - family: Kahle
+    given: D.
+  - family: Wickham
+    given: H.
+  container-title: The R Journal
+  volume: 5
+  issue: 1
+  page: 144-161
+  type: article-journal
+  issued:
+    year: 2013
+  url: https://journal.r-project.org/archive/2013-1/kahle-wickham.pdf
 ---
-
-TO DO:
-- write results, and discussion sections
-- create presentation
 
 
 ```{r, echo = FALSE, include=FALSE}
@@ -109,7 +148,7 @@ opts_chunk$set(tidy.opts=list(width=60),tidy=TRUE)
 
 Twitter and Google Trends are becoming increasingly popular tools for social science researchers. They represent an easily accessible source of large amounts of data, which has become advantageous as survey response rates decline and costs rise. Researchers interested in predicting election results have begun looking to Twitter data to replace or supplement traditional election polls, with mixed results [@GayoAvello2013]. 
 
-Recently, there have been studies using sentiment analysis of Twitter data to predict election outcomes in India [@Salunkhe2017], to predict state-level polling results in the U.S. [@Beauchamp2017], and to predict the winners of three presidential elections in Latin America [@Gaurav2013]. Beauchamp (2017) found that Twitter data may be useful in making state-level campaign strategy decisions. Additionally, a recent study used Google Trends and Twitter data to predict the 2016 U.S. election outcomes with only 1% error [@Kassraie2017]. 
+Recently, there have been studies using sentiment analysis of Twitter data to predict election outcomes in India [@Salunkhe2017], to predict state-level polling results in the U.S. [@Beauchamp2017], and to predict the winners of three presidential elections in Latin America [@Gaurav2013]. @Beauchamp2017 found that Twitter data may be useful in making state-level campaign strategy decisions. Additionally, @Kassraie2017 used Google Trends and Twitter data to predict the 2016 U.S. election outcomes with only 1% error. 
 
 We are interested in whether Twitter data and Google trends data could be used to supplement polling results, by providing real-time information to candidates while they wait for polling data to come in. For example, candidates may be interested in understanding how public opinion has shifted immediately after a debate in order to run a more agile campaign. This project is an exploratory analysis of Twitter and Google Trends data to see if pre- and post-debate polling data during the 2020 U.S. Democratic primary election aligns with these real-time sources. 
 
@@ -431,7 +470,7 @@ post_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", "Harri
 
 
 ### Google Trends
-This section describes gathering the Google Trends data using the package gtrends. First, we register our Google API key. Then, we pull data for each candidate from the 2 days preceding and two days following the debate (November 18 through 22). We have to pull the data in two separate blocks, because gtrends only allows us to use five search terms at a time. We limit the location of searches to the US. Please note that the key here is not a real API key, for security purposes.
+This section describes gathering the Google Trends data using the package gtrendsR [@Gtrendscite]. First, we register our Google API key. Then, we pull data for each candidate from the 2 days preceding and two days following the debate (November 18 through 22). We have to pull the data in two separate blocks, because gtrends only allows us to use five search terms at a time. We limit the location of searches to the US. Please note that the key here is not a real API key, for security purposes.
 
 ```{r, eval=FALSE, tidy=TRUE}
 register_google(key = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
@@ -499,11 +538,9 @@ polling_data <- readxl::read_excel(temp_file)
 
 ## Results
 
-This section presents the main results.
-
 ### Data exploration
 
-The results section may have a data exploration part, but in general the structure here depends on the specific project.
+Because our project was exploratory in nature, we spent significant time exploring each data source. 
 
 #### Twitter
 
@@ -608,7 +645,7 @@ props_tab2 %>%
 
 #### Google Trends
 
-To explore the Google Trends data, we examined the location and density of searches for each candidate. We created a map showing our results. Because it was difficult to see the results for each candidate overlaid on one map, we added a facet wrap to show each individual candidate.
+To explore the Google Trends data, we examined the location and density of searches for each candidate. We created a map showing our results [@mapcite]. Because it was difficult to see the results for each candidate overlaid on one map, we added a facet wrap to show each individual candidate.
 ```{r, include=FALSE}
 #USE THIS CHUNK TO BRING IN gc_locations
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/gc_locations.RData?raw=true")
@@ -681,7 +718,7 @@ polling_data %>%
 
 ### Analysis
 
-We created a Shiny app that allows us to compare the polling, Google Trends, and Twitter sentiment data. 
+We created a Shiny app that allows us to compare the polling, Google Trends, and Twitter sentiment data [@shinycite]. 
 
 First, we cleaned up and combined the three data sources for use in the Shiny app.
 
@@ -780,13 +817,6 @@ shinyApp(ui = ui, server = server)
 
 ```
 
-```{r}
-# What happens here depends on the specific project
-```
-
-```{r}
-# What happens here depends on the specific project
-```
 
 ## Discussion
 
