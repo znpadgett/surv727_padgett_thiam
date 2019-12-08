@@ -72,7 +72,7 @@ props_tab2 %>%
 ```
 
 ## Tweets location pre-debate 
-```{r, fig.cap="Pre-debate Mentions in Tweets, by Candidate & location"}
+```{r, eval=FALSE, fig.cap="Pre-debate Mentions in Tweets, by Candidate & location"}
 
   ggplot() +
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
@@ -84,7 +84,7 @@ props_tab2 %>%
 ```
 
 ## Tweets location post-debate 
-```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate & location"}
+```{r, eval=FALSE, fig.cap="Post-debate Mentions in Tweets, by Candidate & location"}
 
   ggplot() +
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
