@@ -1,0 +1,193 @@
+---
+title: "Pre- and Post-Debate Democratic Primary Data: Twitter, Google Trends, and Polls"
+subtitle: "Fundamentals of Computing and Data Display, Fall 2019"
+author: "Zoe Padgett and Fatou Thiam"
+date: "12/9/2019"
+output: ioslides_presentation
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(tidyverse)
+library(gtrendsR)
+library(dplyr)
+library(ggplot2)
+library(ggmap)
+library(readxl)
+library(shiny)
+library(rtweet)
+library(tidytext)
+library(stringr)
+library(lubridate)
+library(quanteda)
+library(SentimentAnalysis)
+library(GGally)
+library(repmis)
+library(httr)
+```
+
+## Overview
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## Twitter Data
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Google Trends Data
+
+- Used gtrends package to pull Google Trends data for each candidate before and after the debate
+- Generated maps for each candidate to see the geographic distribution of searches
+- Graphed the search popularity of each candidate pre- and post-debate
+
+## Candidate Search Popularity
+```{r, include=FALSE}
+#USE THIS CHUNK TO BRING IN interest_over_time_all
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/interest_over_time_all.RData?raw=true")
+```
+
+```{r, message=FALSE, tidy=TRUE, fig.cap="Pre- and Post-debate Google Trends Data, by Candidate"}
+interest_over_time_all$Pre_post <- factor(interest_over_time_all$Pre_post, 
+                                          levels = c("Pre-debate", "Post-debate"))
+
+interest_over_time_all %>%
+  group_by(keyword, Pre_post) %>%
+  summarise(avg_hits=mean(hits)) %>%
+  ggplot() +
+  geom_col(mapping = aes(x=reorder(keyword, -avg_hits), 
+                         y=avg_hits, fill=Pre_post), color="black", 
+           position="dodge") +
+  xlab("Candidate") + ylab("Hits") +
+  scale_fill_discrete(name = "Timeframe") +
+  theme(axis.text.x = element_text(angle=35))
+  
+```
+
+## Polling Data
+- Data from RealClearPolitics, average polling results pre- and post-debate
+```{r, include=FALSE, tidy=TRUE}
+github_link <- "https://github.com/znpadgett/surv727_padgett_thiam/raw/master/Data/Project%20polling%20data.xlsx"
+temp_file <- tempfile(fileext = ".xlsx")
+req <- GET(github_link, 
+           write_disk(path = temp_file))
+polling_data <- readxl::read_excel(temp_file)
+```
+
+```{r, message=FALSE, tidy=TRUE, fig.cap="Pre- and Post-debate Polling Data, by Candidate"}
+polling_data$Pre_post <- factor(polling_data$Pre_post, levels = c("Pre-debate", "Post-debate"))
+
+polling_data %>%
+  group_by(Candidate, Pre_post) %>%
+  filter(Candidate!="Bennet", Candidate!="Bloomberg") %>%
+  ggplot() +
+    geom_col(mapping = aes(x=reorder(Candidate, -Percentage), y=Percentage, 
+                           fill=Pre_post), color="black",   position="dodge") +
+  xlab("Candidate") + ylab("Percentage") +
+  scale_fill_discrete(name = "Timeframe") +
+  theme(axis.text.x = element_text(angle=35))
+```
+
+## Results
+```{r, include=FALSE}
+#USE THIS CHUNK TO BRING IN pre_sent_pos and post_sent_pos
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/post_sent_pos.RData?raw=true")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/pre_sent_pos.RData?raw=true")
+```
+
+```{r, include=FALSE, tidy=TRUE, warning=FALSE, message=FALSE}
+#clean data
+gtrends <-
+  interest_over_time_all %>%
+  mutate(Candidate=keyword, Data="GTrends") %>%
+  group_by(Candidate, Pre_post, Data) %>%
+  summarise(Percentage=mean(hits))
+
+poll <-
+  polling_data %>%
+  select(Candidate, Pre_post, Percentage) %>%
+  mutate(Data="Polling") %>%
+  group_by(Candidate, Pre_post, Data)
+
+twitter_data <- data.frame("Candidate" = c("Joe Biden", "Bernie Sanders", 
+                                           "Elizabeth Warren", "Kamala Harris", 
+                                           "Pete Buttigieg", "Joe Biden", 
+                                           "Bernie Sanders", "Elizabeth Warren", 
+                                           "Kamala Harris", "Pete Buttigieg"),                            
+                           "Pre_post" =c("Pre-debate","Pre-debate",
+                                         "Pre-debate","Pre-debate","Pre-debate",                            "Post-debate","Post-debate","Post-debate","Post-debate","Post-debate"),
+                   "Data" = c("Twitter", "Twitter","Twitter","Twitter","Twitter",
+                              "Twitter","Twitter","Twitter","Twitter","Twitter"), 
+                  "Percentage"=c(pre_sent_pos$Positive[1],pre_sent_pos$Positive[2],
+                              pre_sent_pos$Positive[3],pre_sent_pos$Positive[4],
+                              pre_sent_pos$Positive[5],post_sent_pos$Positive[1],
+                              post_sent_pos$Positive[2],post_sent_pos$Positive[3],
+                              post_sent_pos$Positive[4],post_sent_pos$Positive[5]))
+
+twitter <- as_tibble(twitter_data)
+twitter <-
+  twitter %>%
+  group_by(Candidate, Pre_post, Data) %>%
+  mutate(Percentage=Percentage*100)
+
+all_data <- rbind(poll, gtrends, twitter)
+
+all_data$Pre_post <- factor(all_data$Pre_post, levels = c("Pre-debate", 
+                                                          "Post-debate"))
+```
+
+```{r, echo=FALSE, tidy=TRUE, warning=FALSE, message=FALSE}
+# Define UI
+ui <- fluidPage(
+  
+  # Application title
+  titlePanel("2020 Democratic Primary Candidate Data"),
+  
+  # Sidebar with a dropdown
+  sidebarLayout(
+    sidebarPanel(
+      selectInput(inputId = "Candidate",                   
+                  label = "Candidate",                  
+                  choices = c("Joe Biden", "Pete Buttigieg", "Kamala Harris", 
+                              "Bernie Sanders", "Elizabeth Warren"),                   
+                  selected = "Joe Biden"),
+      selectInput(inputId = "Data",
+                  label = "Data Type",
+                  choices = c("Polling", "GTrends", "Twitter"),
+                  selected = "Polling")
+    ),
+    
+    # Show plot
+    mainPanel(
+      plotOutput(outputId = "graph")      
+    )
+  )
+)
+
+# Define server logic
+server <- function(input, output) {
+  
+  output$graph <- renderPlot({
+    all_data %>%
+      filter(Candidate == input$Candidate, Data == input$Data) %>%
+      ggplot() +
+      geom_col(mapping = aes(x=Pre_post, y=Percentage, fill=input$Candidate)) +
+      ylim(0,100) +
+      xlab("Timeframe") + ylab("Percentage") +
+      theme(legend.position = "none")
+  })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+```
+
+
+## Conclusion
+
