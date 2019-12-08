@@ -26,6 +26,7 @@ library(SentimentAnalysis)
 library(GGally)
 library(repmis)
 library(httr)
+library(magick)
 ```
 
 ## Overview
@@ -45,6 +46,12 @@ When you click the **Knit** button a document will be generated that includes bo
 - Used gtrends package to pull Google Trends data for each candidate before and after the debate
 - Generated maps for each candidate to see the geographic distribution of searches
 - Graphed the search popularity of each candidate pre- and post-debate
+
+## Google Trends Map
+
+```{r, echo=FALSE, message=FALSE}
+image_read("https://github.com/znpadgett/surv727_padgett_thiam/raw/master/Paper/gtrends_map.png")
+```
 
 ## Candidate Search Popularity
 ```{r, include=FALSE}
