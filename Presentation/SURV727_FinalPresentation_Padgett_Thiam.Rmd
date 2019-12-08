@@ -53,7 +53,7 @@ props_tab1 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
-    labs(x = "Democatric Party Canditates", 
+    labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
        caption = "Source: Twitter") 
 ```
@@ -64,7 +64,7 @@ props_tab2 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
-    labs(x = "Democatric Party Canditates", 
+    labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
        title = "Post Debate candidates mentions in Tweets", 
        caption = "Source: Twitter")
@@ -76,7 +76,7 @@ props_tab2 %>%
 
   ggplot() +
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
-    labs(x = "Democatric Party Canditates", 
+    labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
        title = "Post Debate candidates mentions in Tweets", 
        caption = "Source: Twitter")
@@ -88,7 +88,7 @@ props_tab2 %>%
 
   ggplot() +
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
-    labs(x = "Democatric Party Canditates", 
+    labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
        title = "Post Debate candidates mentions in Tweets", 
        caption = "Source: Twitter")
@@ -252,5 +252,10 @@ shinyApp(ui = ui, server = server)
 
 ## Conclusion
 
-
+- Neither Twitter nor Google Trends data align with polling data
+- These data are not representative of US voters, lack of demographic data for adjustment
+- Variable-to-variable comparison between two data sources may not be realistic (e.g., do number of searches and positivity of tweets actually mean more people will vote for a candidate?)
+- Many difficulties in practical usage of this data (e.g., location fields)
+- Overall, we don't think this data should be used in place of survey data
+- However, this data could still be useful for candidates in understanding how social media users percieve them before and after a debate, or in understanding their search popularity
 
