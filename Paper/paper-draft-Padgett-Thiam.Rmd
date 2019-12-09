@@ -154,7 +154,7 @@ We are interested in whether Twitter data and Google trends data could be used t
 
 ## Data
 
-Using the rtweet package and the search_tweet function, we were able to gather sufficient tweets for our project and classified it as pre or post debate. The initial dataset contains a little over 1.3 million tweets which was rich enough to proceed with analysis. After removing irrelevant tweets such as tweets containing "Ukraine", we were left with 1.2 million tweets which we then divided in two groups :pre and post debate. The pre-debate dataset has 226,799 tweets and 998,780 tweets for the post-debate dataset. As expected, there was a lot more tweets after the debate than before. With Twitter having a location column, we wanted to focus our anylysis on certain regions/ states in the U.S., however the location column is an open text and not regulated. We then picked a few states to focus our analysis on. 
+Using the rtweet package and the search_tweet function, we were able to gather sufficient tweets for our project and classified it as pre or post debate. The initial dataset contains a little over 1.3 million tweets which was rich enough to proceed with analysis. After removing irrelevant tweets such as tweets containing "Ukraine", we were left with 1.2 million tweets which we then divided in two groups :pre and post debate. The pre-debate dataset has 226,799 tweets and 998,780 tweets for the post-debate dataset. As expected, there was a lot more tweets after the debate than before. Twitter has a location field since we wanted to focus our anylysis on certain states in the U.S., however the location column is an open text and not regulated. We selected severals states: New York, Virginia, New Hampshire, Nevada, Illinois, Iowa, Ohio, California and DC to focus our analysis on.  
 
 
 ### Twitter
@@ -617,31 +617,83 @@ A visual of the proportion of tweets pre and post debate
 #USE THIS CHUNK TO BRING IN props_tab1 and props_tab2
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab1.RData?raw=true")
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab2.RData?raw=true")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/loc_pre_all.RData?raw=true")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/loc_post_all.RData?raw=true")
 
 ```
-
+## Pre-debate number of tweets 
 ```{r, fig.cap="Pre-debate Mentions in Tweets, by Candidate"}
 props_tab1 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
-    labs(x = "Democatric Party Canditates", 
+    labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
-       caption = "Source: Twiiter") 
+           caption = "Source: Twitter
+       
+                                 Figure 1") +
+theme(axis.text.x=element_text(angle=90,hjust=1)) 
 
 ```
+Figure 1 shows the number of tweets that mentioned each candidate before the debate. We noticed that Sanders, Biden and Buttigieg are in the lead with a little over 25,000 mentions. 
 
-
-###### Post-debate number of tweets 
+## Post-debate number of tweets 
 ```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate"}
 props_tab2 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
-  geom_col(mapping = aes(x = reorder(Variable, -Count), y=Count, fill = Variable)) +
-    labs(x = "Democatric Party Canditates", 
+  geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
+    labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
-       caption = "Source: Twiiter") 
+       title = "Post Debate candidates mentions in Tweets", 
+            caption = "Source: Twitter
+       
+                                 Figure 2") +
+theme(axis.text.x=element_text(angle=90,hjust=1)) 
 
+      
+```
+
+Figure 2 shows the post- debate tweets mentions by candidate. As expected lots more tweets mentions occured after the debate, 5 times more than pre- debate. Here we noticed that the ranking change with Harris and Yang in the lead along with Sanders.     
+
+## Tweets location pre-debate 
+```{r, fig.cap="Pre-debate Mentions in Tweets, by Candidate & location"}
+
+ loc_pre_all %>%
+  mutate(Location = loc) %>%
+  group_by(Candidate, Location) %>%
+  summarise(total = n()) %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(Candidate, -total), y=total, fill = Location)) +
+    labs(x = "Democratic Party Canditates", 
+       y = "Number of Tweets", 
+       title = "Pre Debate candidates mentions in Tweets by location", 
+             caption = "Source: Twitter
+       
+                                 Figure 3") +
+           theme(axis.text.x=element_text(angle=90,hjust=1)) 
+
+      
+```
+Figure 3 .....
+## Tweets location post-debate 
+```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate & location"}
+
+ loc_post_all %>%
+  mutate(Location = loc) %>%
+  group_by(Candidate, Location) %>%
+  summarise(total = n()) %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(Candidate, -total), y=total, fill = Location)) +
+    labs(x = "Democratic Party Canditates", 
+       y = "Number of Tweets", 
+       title = "Post Debate candidates mentions in Tweets by location", 
+              caption = "Source: Twitter
+       
+                                 Figure 4") +
+theme(axis.text.x=element_text(angle=90,hjust=1)) 
+ 
+      
 ```
 
 #### Google Trends
