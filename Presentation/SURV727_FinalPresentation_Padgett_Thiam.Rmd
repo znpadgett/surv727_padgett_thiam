@@ -57,8 +57,13 @@ props_tab1 %>%
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
     labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
-       caption = "Source: Twitter") 
+           caption = "Source: Twitter
+       
+                                 Figure 1") +
+theme(axis.text.x=element_text(angle=90,hjust=1)) 
+
 ```
+
 
 ## Post-debate number of tweets 
 ```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate"}
@@ -69,7 +74,11 @@ props_tab2 %>%
     labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
        title = "Post Debate candidates mentions in Tweets", 
-       caption = "Source: Twitter")
+            caption = "Source: Twitter
+       
+                                 Figure 2") +
+theme(axis.text.x=element_text(angle=90,hjust=1)) 
+
       
 ```
 
@@ -85,7 +94,11 @@ props_tab2 %>%
     labs(x = "Democatric Party Canditates", 
        y = "Number of Tweets", 
        title = "Pre Debate candidates mentions in Tweets by location", 
-       caption = "Source: Twiiter") 
+             caption = "Source: Twitter
+       
+                                 Figure 3") +
+           theme(axis.text.x=element_text(angle=90,hjust=1)) 
+
       
 ```
 
@@ -101,7 +114,11 @@ props_tab2 %>%
     labs(x = "Democatric Party Canditates", 
        y = "Number of Tweets", 
        title = "Post Debate candidates mentions in Tweets by location", 
-       caption = "Source: Twiiter") 
+              caption = "Source: Twitter
+       
+                                 Figure 4") +
+theme(axis.text.x=element_text(angle=90,hjust=1)) 
+ 
       
 ```
 
