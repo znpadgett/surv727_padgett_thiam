@@ -42,9 +42,11 @@ library(magick)
 
 
 ```{r, include=FALSE}
-#USE THIS CHUNK TO BRING IN props_tab1 and props_tab2
+#USE THIS CHUNK TO BRING IN props_tab1 and props_tab2, loc_pre_all, and loc_post_all
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab1.RData?raw=true")
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab2.RData?raw=true")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/loc_pre_all.RData?raw=true")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/loc_post_all.RData?raw=true")
 ```
 
 ## Pre-debate number of tweets 
