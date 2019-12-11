@@ -7,8 +7,8 @@ fontsize: 12pt
 text-align: left
 output:
   pdf_document:
-    fig_caption: yes        
-    includes:  
+    fig_caption: yes
+    includes:
       in_header: fix_float.tex
     toc: yes
     df_print: kable
@@ -147,8 +147,7 @@ references:
     given: J.
   - family: Robinson
     given: D.
-  doi: 10.21105/joss.00037
-  url: http://dx.doi.org/10.21105/joss.00037
+  url: "http://dx.doi.org/10.21105/joss.00037"
   issued:
     year: 2016
   publisher: The Open Journal
@@ -163,7 +162,6 @@ references:
     given: S.
   - family: Proellochs
     given: N.
-  doi: 10.21105/joss.00037
   url: https://CRAN.R-project.org/package=SentimentAnalysis
   issued:
     year: 2019
@@ -185,13 +183,9 @@ references:
     given: S.
   - family: Matsuo
     given: A.
-  doi: 10.21105/joss.00774
   url: https://quanteda.io
   issued:
     year: 2018
-  volume: 3
-    number: 30
-    pages: 774
 - id: tidyverse
   title: "tidyverse: Easily Install and Load the 'Tidyverse'"
   author:
@@ -201,7 +195,6 @@ references:
   issued:
     year: 2017
   note: R package version 1.2.1
-
 ---
 
 
@@ -302,7 +295,6 @@ df2 <- df2 %>%
                     
 ```{r, eval=FALSE}
 tweets <- rbind(df1, df2)
-
 ```
 
 Next, we seperate the tweets by candidates in order to do analysis at the candidate level. It's important to note that one tweets can be addressed to multiple candidates. In that case, the tweet will be found in the each of those candidates dataset. The code below exemplifies this step of the cleaning process.
@@ -351,8 +343,6 @@ df1$AY <-(str_detect(df1$text, regex("#yang| @AndrewYang", ignore_case = TRUE)))
 df1$BC <-(str_detect(df1$text, regex("#booker | @BookerCory", ignore_case = TRUE)))
 df1$AK <-(str_detect(df1$text, regex("#klobuchar | @amyklobuchar", ignore_case = TRUE)))
 df1$TG <-(str_detect(df1$text, regex("#gabbard |@TulsiGabbard", ignore_case = TRUE)))
-
-
 ```
 
 ```{r, eval=FALSE, include=FALSE}
@@ -366,8 +356,6 @@ df2$AY <-(str_detect(df2$text, regex("#yang| @AndrewYang", ignore_case = TRUE)))
 df2$BC <-(str_detect(df2$text, regex("#booker | @BookerCory", ignore_case = TRUE)))
 df2$AK <-(str_detect(df2$text, regex("#klobuchar | @amyklobuchar", ignore_case = TRUE)))
 df2$TG <-(str_detect(df2$text, regex("#gabbard |@TulsiGabbard", ignore_case = TRUE)))
-
-
 ```
 
 Here we reformat the created_at column as a date & time variable in order to seperate the tweets in two groups : pre- and post- debate.
@@ -978,3 +966,5 @@ Overall, we don't think that this data should be used in place of survey data wh
 It would be advantageous to survey methodologists to be able to use sources such as Twitter to replace survey data. However, we need to aknowledge the limitations preventing us from doing so. We all will agree that Twitter users do not adequately represent the population consequently introducing coverage error. Validity and measurement error just to name a few limitations we encountered with Twitter data. In lieu of replacing survey data, Twitter data can/ should be use as a supplemental data. It is important to note that we collected data for a short period of time. We believed that Twitter data can be much more useful if we had a longer timeframe. With that we would be able to perform more in depht analysis with time a key variable or even fit models. For instance, the next democratic debate is scheduled for December 19th, it would be intersting to see how the sentiment differ from the November 21st debate. On that point, candidates could use Twitter data for many other purposes such as percpetion in the Twitter world or change over time in sentiment but definitely not for election outcomes.    
 
 ## References
+
+
