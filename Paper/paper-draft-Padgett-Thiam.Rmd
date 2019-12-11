@@ -216,6 +216,7 @@ library(SentimentAnalysis)
 library(GGally)
 library(repmis)
 library(httr)
+library(rsconnect)
 ```
 
 ```{r, message="FALSE", warning=FALSE, results="hide", include=FALSE}
@@ -869,13 +870,21 @@ source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data
 gtrends <-
   interest_over_time_all %>%
   mutate(Candidate=keyword, Data="GTrends") %>%
+  filter(Candidate %in% c("Joe Biden", "Bernie Sanders", 
+                          "Elizabeth Warren", "Kamala Harris", 
+                          "Pete Buttigieg")) %>%
   group_by(Candidate, Pre_post, Data) %>%
+  arrange(Candidate, Pre_post) %>%
   summarise(Percentage=mean(hits))
 
 poll <-
   polling_data %>%
   select(Candidate, Pre_post, Percentage) %>%
+  filter(Candidate %in% c("Joe Biden", "Bernie Sanders", 
+                          "Elizabeth Warren", "Kamala Harris", 
+                          "Pete Buttigieg")) %>%
   mutate(Data="Polling") %>%
+  arrange(Candidate, Pre_post) %>%
   group_by(Candidate, Pre_post, Data)
 
 twitter_data <- data.frame("Candidate" = c("Joe Biden", "Bernie Sanders", 
@@ -897,6 +906,7 @@ twitter <- as_tibble(twitter_data)
 twitter <-
   twitter %>%
   group_by(Candidate, Pre_post, Data) %>%
+  arrange(Candidate, desc(Pre_post)) %>%
   mutate(Percentage=Percentage*100)
 
 all_data <- rbind(poll, gtrends, twitter)
@@ -905,9 +915,10 @@ all_data$Pre_post <- factor(all_data$Pre_post, levels = c("Pre-debate",
                                                           "Post-debate"))
 ```
 
-Then, we created a shiny app, which can be viewed by running the following code:
+Then, we created a shiny app, which can be viewed at https://znpadgett.shinyapps.io/shinyapp/:
 ```{r, eval=FALSE, tidy=TRUE}
 # Define UI
+surv727app <-
 ui <- fluidPage(
   
   # Application title
@@ -950,9 +961,83 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
 ```
 
+```{r, eval=FALSE, include=FALSE}
+#upload shiny app to the web - fake secret
+rsconnect::setAccountInfo(name='znpadgett',
+			  token='DA192A4A3FA4FB169FE8B04D20CA9CEA',
+			  secret='XXXXXXXXXXXXXXXXXXXXXXXXXX')
+```
+
+Finally, we examined the relationships between the polling data and the Twitter and Google Trends data post-debate, as well as the relationships between pre- and post-debate changes across data sources.
+
+```{r, tidy=TRUE, fig.cap="Comparison of Post-debate Twitter and Polling Data"}
+graphing_data <- cbind(twitter, poll, gtrends)
+graphing_data %>%
+  group_by(Pre_post, Candidate) %>%
+  filter(Pre_post=="Post-debate") %>%
+  ggplot() +
+  geom_point(mapping = aes(x=Percentage, y=Percentage1, color=Candidate), size=4) +
+  xlim(0,20) +
+  ylim(0,30) +
+  labs(x="Twitter Sentiment", 
+       y="Polling Data")
+```
+
+```{r, tidy=TRUE, fig.cap="Comparison of Post-debate Google Trends and Polling Data"}
+graphing_data  %>%
+  group_by(Pre_post, Candidate) %>%
+  filter(Pre_post=="Post-debate") %>%
+  ggplot() +
+  geom_point(mapping = aes(x=Percentage2, y=Percentage1, color=Candidate), size=4) +
+  xlim(0,100) +
+  ylim(0,30) +
+  labs(x="Google Trends Data", 
+       y="Polling Data")
+```
+
+```{r, tidy=TRUE, fig.cap="Comparison of Changes in Twitter and Polling Data"}
+print(graphing_data)
+pre <-
+graphing_data  %>%
+  select(Pre_post, Candidate, Percentage, Percentage1, Percentage2) %>%
+  group_by(Pre_post, Candidate) %>%
+  filter(Pre_post=="Pre-debate") %>%
+  mutate(Pre_twitter=Percentage, Pre_polling=Percentage1, Pre_gtrends=Percentage2)
+
+post <-
+  graphing_data  %>%
+  select(Pre_post, Candidate, Percentage, Percentage1, Percentage2) %>%
+  group_by(Pre_post, Candidate) %>%
+  filter(Pre_post=="Post-debate") %>%
+  mutate(Post_twitter=Percentage, Post_polling=Percentage1, Post_gtrends=Percentage2)
+
+change_data <- cbind(pre, post)
+
+change_data %>%
+  group_by(Pre_post, Candidate) %>%
+  mutate(change_twitter = ((Post_twitter - Pre_twitter) / Pre_twitter) * 100, 
+         change_polling = ((Post_polling - Pre_polling) / Pre_polling) * 100, 
+         change_gtrends = ((Post_gtrends - Pre_gtrends) / Pre_gtrends) * 100) %>%
+  ggplot() +
+  geom_point(mapping = aes(x=change_twitter, y=change_polling, color=Candidate), size=4) +
+  labs(x="Percent Change in Twitter Sentiment", 
+       y="Percent Change in Polling Data")
+  
+```
+
+```{r, tidy=TRUE, fig.cap="Comparison of Changes in Google Trends and Polling Data"}
+change_data %>%
+  group_by(Pre_post, Candidate) %>%
+  mutate(change_twitter = ((Post_twitter - Pre_twitter) / Pre_twitter) * 100, 
+         change_polling = ((Post_polling - Pre_polling) / Pre_polling) * 100, 
+         change_gtrends = ((Post_gtrends - Pre_gtrends) / Pre_gtrends) * 100) %>%
+  ggplot() +
+  geom_point(mapping = aes(x=change_gtrends, y=change_polling, color=Candidate), size=4) +
+  labs(x="Percent Change in Google Trends Data", 
+       y="Percent Change in Polling Data")
+```
 When looking at the pre- and post-debate data from each source side-by-side, we can see that, while candidates who are polling higher have higher numbers of tweets and Google searches (for the most part), there is no clear relationship between the post-debate changes in polling numbers and the post-debate changes in Twitter and Google Trends data. Regardless of polling numbers, all candidates had higher Twitter positivity ratings and higher numbers of Google searches post-debate than pre-debate. 
 
 ## Discussion
@@ -963,7 +1048,7 @@ Additionally, there are many practical difficulties in using the found data, for
 
 Overall, we don't think that this data should be used in place of survey data when it comes to election polling. However, this data could still be useful for candidates in understanding how social media users percieve them before and after a debate, or in understanding their search popularity. It is important to recognize that these measures are not an accurate proxy for voter opinion, but they could still be useful in their own right. Campaigns would also need to recognize that the target population of any inferences may on these data is not U.S. voters, or even all those living in the U.S., but is actually the population of tweets (for the Twitter data) or Google searches (for the Google Trends data). When these considerations are taken into account, we still think that this data could be useful for campaign strategy.
 
-It would be advantageous to survey methodologists to be able to use sources such as Twitter to replace survey data. However, we need to aknowledge the limitations preventing us from doing so. We all will agree that Twitter users do not adequately represent the population consequently introducing coverage error. Validity and measurement error just to name a few limitations we encountered with Twitter data. In lieu of replacing survey data, Twitter data can/ should be use as a supplemental data. It is important to note that we collected data for a short period of time. We believed that Twitter data can be much more useful if we had a longer timeframe. With that we would be able to perform more in depht analysis with time a key variable or even fit models. For instance, the next democratic debate is scheduled for December 19th, it would be intersting to see how the sentiment differ from the November 21st debate. On that point, candidates could use Twitter data for many other purposes such as percpetion in the Twitter world or change over time in sentiment but definitely not for election outcomes.    
+It would be advantageous to survey methodologists to be able to use sources such as Twitter and Google Trends to replace survey data. However, we need to acknowledge the limitations preventing us from doing so. We all will agree that Twitter users do not adequately represent the population consequently introducing coverage error. Validity and measurement error just to name a few limitations we encountered with Twitter data. In lieu of replacing survey data, Twitter data can and should be use as a supplemental data. It is also important to note that we collected data for a short period of time. We believed that Twitter data can be much more useful if we had a longer timeframe. With that we would be able to perform more in depht analysis with time a key variable or even fit models. For instance, the next democratic debate is scheduled for December 19th, it would be intersting to see how the sentiment differ from the November 21st debate. On that point, candidates could use Twitter data for many other purposes such as percpetion in the Twitter world or change over time in sentiment but definitely not for election outcomes.
 
 ## References
 
