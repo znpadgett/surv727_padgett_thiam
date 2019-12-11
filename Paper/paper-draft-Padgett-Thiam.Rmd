@@ -217,6 +217,7 @@ library(GGally)
 library(repmis)
 library(httr)
 library(pander)
+library(rsconnect)
 ```
 
 ```{r, message="FALSE", warning=FALSE, results="hide", include=FALSE}
