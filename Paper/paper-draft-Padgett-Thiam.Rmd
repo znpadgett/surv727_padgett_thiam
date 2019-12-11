@@ -217,6 +217,8 @@ library(GGally)
 library(repmis)
 library(httr)
 library(rsconnect)
+library(pander)
+
 ```
 
 ```{r, message="FALSE", warning=FALSE, results="hide", include=FALSE}
@@ -611,8 +613,29 @@ polling_data <- readxl::read_excel(temp_file)
 
 ## Results
 
-Table 1 shows the number of mentions by candidate pre- and post- debate and Table 2 shows similar results adding location as a factor. In both tables, we see that there were lot more tweets after the debate. This was anticipated with the debate being a headline the next day. This was also the reason why we decided to focus on pre- and post- debate analysis and not focus on the number of tweets. Sentiment analysis was performed using the GI dictionnaire in the sentiment analysis package [@sentiment].Each tweet received a positive, neutral and/ or negative score. For this project, we summed the positive score of all tweets and divided by the number of tweets in each dataset. This gave us the average tweet positivity by candidate shown in Table 3. Candidate tweet positivity pre- debate are very close with xx% for candx being the highest. We notice a slight increase for almost all candidates with now xx% forcandx in the lead.     
+Table 1 shows the number of mentions by candidate pre- and post- debate and Table 2 (CA only) shows similar results adding location as a factor. In both tables, we see that there were lot more tweets after the debate. This was anticipated with the debate being a headline the next day. This was also the reason why we decided to focus on pre- and post- debate analysis and not focus on the number of tweets. Sentiment analysis was performed using the GI dictionnaire in the sentiment analysis package [@sentiment].Each tweet received a positive, neutral and/ or negative score. For this project, we summed the positive score of all tweets and divided by the number of tweets in each dataset. This gave us the average tweet positivity by candidate shown in Table 3. Candidate tweet positivity scrore pre- debate are very close with 15% for Sanders being the highest. We notice a slight increase for all candidates with Sanders in the lead still at 16%.
 
+```{r, include=FALSE}
+#USE THIS CHUNK TO BRING IN table1, table2 and table3
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/table1.RData?raw=true")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/table2.RData?raw=true")
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/table3.RData?raw=true")
+```
+
+```{r}
+panderOptions('table.caption.prefix', 'Table 1: ')
+pander(table1 ,caption = "Count of tweets that mentionned candidates pre- and post- debate.")
+```
+
+```{r}
+panderOptions('table.caption.prefix', 'Table 2: ')
+pander(table2 ,caption = "Count of tweets that mentionned candidates in California pre- and post- debate.")
+```
+
+```{r}
+panderOptions('table.caption.prefix', 'Table 3: ')
+pander(table3 ,caption = "Sentiment Analysis average positivity score pre- and post- debate by candidate.")
+```
 
 ### Data exploration
 
@@ -689,7 +712,7 @@ A visual of the proportion of tweets pre and post debate
 ###### Pre-debate number of tweets 
 
 ```{r, include=FALSE}
-#USE THIS CHUNK TO BRING IN props_tab1 and props_tab2
+#USE THIS CHUNK TO BRING IN props_tab1, props_tab2, loc_pre_all and loc_post_all 
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab1.RData?raw=true")
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/props_tab2.RData?raw=true")
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/loc_pre_all.RData?raw=true")
