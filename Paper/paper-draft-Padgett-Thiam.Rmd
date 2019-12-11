@@ -240,10 +240,6 @@ We are interested in whether Twitter data and Google trends data could be used t
 ## Data
 
 Using the rtweet package and the search_tweet function, we were able to gather sufficient tweets for our project and seperated in two datasets; pre- and post- debate. The initial dataset contains a little over 1.3 million tweets which was rich enough to proceed with analysis. After removing irrelevant tweets such as tweets containing "Ukraine", we were left with over 1.2 million tweets. This was used to create the pre- and post- debate datasets. The pre-debate dataset has 226,799 tweets and 998,780 tweets for the post-debate dataset. As expected, there was a lot more tweets after the debate than before. We used the  Twitter location field to perform analysis at the state level.However, the location column is an open text and not regulated. We selected severals states such New York, Virginia, New Hampshire, Nevada, Illinois, Iowa, Ohio, California and DC to focus our analysis on.  
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 
 ### Twitter
 
@@ -387,7 +383,7 @@ df2 <- df2 %>%
 
 ```
 
-All the tweets received before 9 p.m. on November 20th were accounted for in the pre-debate dataset and all tweets from 11 p.m. on November 20th to the next day are in the post-debate dataset. Note that tweets during the debate( 9 - 11 p.m. were removed)
+All the tweets received before 9 p.m. on November 20th were accounted for in the pre-debate dataset and all tweets from 11 p.m. on November 20th to the next day are in the post-debate dataset. Note that tweets during the debate (9 - 11 p.m.) were removed.
 ```{r, eval=FALSE, tidy=TRUE}
 pre_debate <- tweets %>%
               filter(date(date) == "2019-11-20" & hour(date) < 21 )
@@ -629,10 +625,6 @@ polling_data <- readxl::read_excel(temp_file)
 Table 1 shows the number of mentions by candidate pre- and post- debate and Table 2 shows similar results adding location as a factor. In both tables, we see that there were lot more tweets after the debate. This was anticipated with the debate being a headline the next day. This was also the reason why we decided to focus on pre- and post- debate analysis and not focus on the number of tweets. Sentiment analysis was performed using the GI dictionnaire in the sentiment analysis package [@sentiment].Each tweet received a positive, neutral and/ or negative score. For this project, we summed the positive score of all tweets and divided by the number of tweets in each dataset. This gave us the average tweet positivity by candidate shown in Table 3. Candidate tweet positivity pre- debate are very close with xx% for candx being the highest. We notice a slight increase for almost all candidates with now xx% forcandx in the lead.     
 
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 ### Data exploration
 
 Because our project was exploratory in nature, we spent significant time exploring each data source. 
@@ -715,13 +707,9 @@ source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/loc_post_all.RData?raw=true")
 
 ```
-<<<<<<< Updated upstream
-## Pre-debate number of tweets 
-=======
 
 ###### Pre-debate number of tweets 
 
->>>>>>> Stashed changes
 ```{r, fig.cap="Pre-debate Mentions in Tweets, by Candidate"}
 props_tab1 %>%
   filter(Cat == "TRUE") %>%
@@ -737,34 +725,20 @@ theme(axis.text.x=element_text(angle=90,hjust=1))
 ```
 Figure 1 shows the number of tweets that mentioned each candidate before the debate. We noticed that Sanders, Biden and Buttigieg are in the lead with over 25,000 tweets mentions. 
 
-<<<<<<< Updated upstream
-## Post-debate number of tweets 
-=======
+
 ###### Post-debate number of tweets 
->>>>>>> Stashed changes
 ```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate"}
 props_tab2 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
     labs(x = "Democratic Party Candidates", 
-<<<<<<< Updated upstream
        y = "Number of Tweets", 
        title = "Post Debate candidates mentions in Tweets", 
             caption = "Source: Twitter
        
                                  Figure 2") +
 theme(axis.text.x=element_text(angle=90,hjust=1)) 
-
-=======
-       y = "Number of Tweets", 
-       title = "Post Debate candidates mentions in Tweets", 
-            caption = "Source: Twitter
-       
-                                 Figure 2") +
-theme(axis.text.x=element_text(angle=90,hjust=1)) 
-
-      
 ```
 
 \newpage
@@ -808,54 +782,6 @@ Figure 3 shows the number of tweets mentions by candidate by location pre- debat
        
                                  Figure 4") +
 theme(axis.text.x=element_text(angle=90,hjust=1)) 
- 
->>>>>>> Stashed changes
-      
-```
-Figure 4 is the post- debate tweets mentions by candidate by location. Just like in Figure 3 (pre-debate analysis) California and New York had the most users tweeting about the candidates.Harris, Yang and Sanders are mostly mentionned in tweets by users. 
-
-Figure 2 shows the post- debate tweets mentions by candidate. As expected, lot more tweets mentions occured after the debate, about 5 times more than pre- debate. Here we noticed that the ranking change with Harris and Yang in the lead along with Sanders and tweets mentions close to 150,000.       
-
-## Tweets location pre-debate 
-```{r, fig.cap="Pre-debate Mentions in Tweets, by Candidate & location"}
-
- loc_pre_all %>%
-  mutate(Location = loc) %>%
-  group_by(Candidate, Location) %>%
-  summarise(total = n()) %>%
-  ggplot() +
-  geom_col(mapping = aes(x = reorder(Candidate, -total), y=total, fill = Location)) +
-    labs(x = "Democratic Party Canditates", 
-       y = "Number of Tweets", 
-       title = "Pre Debate candidates mentions in Tweets by location", 
-             caption = "Source: Twitter
-       
-                                 Figure 3") +
-           theme(axis.text.x=element_text(angle=90,hjust=1)) 
-
-      
-```
-Figure 3 shows the number of tweets mentions by candidate by location pre- debate. Here we notice that Buttigieg, Sanders and Yang get the most tweets mentions and mainly coming from California and New York for all 3 candidates. These results are not surprising with California and New York population presence in Twitter. 
-
-
-## Tweets location post-debate 
-```{r, fig.cap="Post-debate Mentions in Tweets, by Candidate & location"}
-
- loc_post_all %>%
-  mutate(Location = loc) %>%
-  group_by(Candidate, Location) %>%
-  summarise(total = n()) %>%
-  ggplot() +
-  geom_col(mapping = aes(x = reorder(Candidate, -total), y=total, fill = Location)) +
-    labs(x = "Democratic Party Canditates", 
-       y = "Number of Tweets", 
-       title = "Post Debate candidates mentions in Tweets by location", 
-              caption = "Source: Twitter
-       
-                                 Figure 4") +
-theme(axis.text.x=element_text(angle=90,hjust=1)) 
- 
-      
 ```
 Figure 4 is the post- debate tweets mentions by candidate by location. Just like in Figure 3 (pre-debate analysis) California and New York had the most users tweeting about the candidates.Harris, Yang and Sanders are mostly mentionned in tweets by users. 
 
@@ -1043,12 +969,6 @@ When looking at the pre- and post-debate data from each source side-by-side, we 
 
 ## Discussion
 
-<<<<<<< Updated upstream
-It would be advantageous to survey methodologists to be able to use sources such as Twitter to replace survey data. However, we need to aknowledge the limitations preventing us from doing so. We all will agree that Twitter users do not adequately represent the population consequently introducing coverage error. Validity and measurement error just to name a few limitations we encountered with Twitter data. In lieu of replacing survey data, Twitter data can/ should be use as a supplemental data. It is important to note that we collected data for a short period of time. We believed that Twitter data can be much more useful if we had a longer timeframe. With that we would be able to perform more in depht analysis with time a key variable or even fit models. For instance, the next democratic debate is scheduled for December 19th, it would be intersting to see how the sentiment differ from the November 21st debate. On that point, candidates could use Twitter data for many other purposes such as percpetion in the Twitter world or change over time in sentiment but definitely not for election outcomes.    
-
-## References
-
-=======
 Our results show that neither Twitter nor Google Trends data align with pre- and post-debate changes in polling numbers There were no discernable patterns that relate the found data to the polling data. There may be many reasons why the found data did not align with the polling data. For one, the found data are not representative of U.S. voters, only Twitter users or Google searches, and the lack of availability of demographic data does not allow for weighting adjustments. Variable-to-variable comparison between two data sources may not be realistic. For example, a large number of searches and higher positivity of tweets may not actually mean that more people will vote for a candidate.
 
 Additionally, there are many practical difficulties in using the found data, for example that the location field in the Twitter data corresponds to self-reported location, an open-ended field. Many users give incorrect or fake locations.
@@ -1058,5 +978,3 @@ Overall, we don't think that this data should be used in place of survey data wh
 It would be advantageous to survey methodologists to be able to use sources such as Twitter to replace survey data. However, we need to aknowledge the limitations preventing us from doing so. We all will agree that Twitter users do not adequately represent the population consequently introducing coverage error. Validity and measurement error just to name a few limitations we encountered with Twitter data. In lieu of replacing survey data, Twitter data can/ should be use as a supplemental data. It is important to note that we collected data for a short period of time. We believed that Twitter data can be much more useful if we had a longer timeframe. With that we would be able to perform more in depht analysis with time a key variable or even fit models. For instance, the next democratic debate is scheduled for December 19th, it would be intersting to see how the sentiment differ from the November 21st debate. On that point, candidates could use Twitter data for many other purposes such as percpetion in the Twitter world or change over time in sentiment but definitely not for election outcomes.    
 
 ## References
-
->>>>>>> Stashed changes
