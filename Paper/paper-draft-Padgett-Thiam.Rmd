@@ -234,9 +234,11 @@ We are interested in whether Twitter data and Google trends data could be used t
 
 ## Data
 
-Using the rtweet package and the search_tweet function, we were able to gather sufficient tweets for our project and seperated in two datasets; pre- and post- debate. The initial dataset contains a little over 1.3 million tweets which was rich enough to proceed with analysis. After removing irrelevant tweets such as tweets containing "Ukraine", we were left with over 1.2 million tweets. This was used to create the pre- and post- debate datasets. The pre-debate dataset has 226,799 tweets and 998,780 tweets for the post-debate dataset. As expected, there was a lot more tweets after the debate than before. We used the  Twitter location field to perform analysis at the state level.However, the location column is an open text and not regulated. We selected severals states such New York, Virginia, New Hampshire, Nevada, Illinois, Iowa, Ohio, California and DC to focus our analysis on.  
+All data used to create the tables, figures, and shiny app in this paper can be found on our Github repository at https://github.com/znpadgett/surv727_padgett_thiam. 
 
 ### Twitter
+
+Using the rtweet package and the search_tweet function, we were able to gather sufficient tweets for our project and seperated in two datasets; pre- and post- debate. The initial dataset contains a little over 1.3 million tweets which was rich enough to proceed with analysis. After removing irrelevant tweets such as tweets containing "Ukraine", we were left with over 1.2 million tweets. This was used to create the pre- and post- debate datasets. The pre-debate dataset has 226,799 tweets and 998,780 tweets for the post-debate dataset. As expected, there was a lot more tweets after the debate than before. We used the  Twitter location field to perform analysis at the state level.However, the location column is an open text and not regulated. We selected severals states such New York, Virginia, New Hampshire, Nevada, Illinois, Iowa, Ohio, California and DC to focus our analysis on. 
 
 Below is our token to access the Twitter API and start collecting tweets. Note that these codes are fake, for security purposes.
 
@@ -535,7 +537,8 @@ pre_sent_pos <- data.frame("Candidate" = c("Biden",
 ```
 
 ```{r, eval=FALSE, include=FALSE}
-post_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", "Harris", "Buttigieg"), 
+post_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", 
+                                            "Harris", "Buttigieg"), 
                        "Positive" =c((sum(sentiments_jb_post$PositivityGI))/27477,
                                       (sum(sentiments_bs_post$PositivityGI))/31603,                                                             (sum(sentiments_ew_post$PositivityGI))/18628,
                                      (sum(sentiments_kh_post$PositivityGI))/16362,
@@ -612,6 +615,10 @@ polling_data <- readxl::read_excel(temp_file)
 
 ## Results
 
+### Data Exploration
+
+#### Twitter
+
 Table 1 shows the number of mentions by candidate pre- and post- debate and Table 2 (CA only) shows similar results adding location as a factor. In both tables, we see that there were lot more tweets after the debate. This was anticipated with the debate being a headline the next day. This was also the reason why we decided to focus on pre- and post- debate analysis and not focus on the number of tweets. Sentiment analysis was performed using the GI dictionnaire in the sentiment analysis package [@sentiment].Each tweet received a positive, neutral and/ or negative score. For this project, we summed the positive score of all tweets and divided by the number of tweets in each dataset. This gave us the average tweet positivity by candidate shown in Table 3. Candidate tweet positivity scrore pre- debate are very close with 15% for Sanders being the highest. We notice a slight increase for all candidates with Sanders in the lead still at 16%.
 
 ```{r, include=FALSE}
@@ -623,28 +630,25 @@ source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data
 
 ```{r}
 panderOptions('table.caption.prefix', 'Table 1: ')
-pander(table1 ,caption = "Count of tweets that mentionned candidates pre- and post- debate.")
+pander(table1 ,caption = "Count of tweets that mentionned 
+       candidates pre- and post- debate.")
 ```
 
 ```{r}
 panderOptions('table.caption.prefix', 'Table 2: ')
-pander(table2 ,caption = "Count of tweets that mentionned candidates in California pre- and post- debate.")
+pander(table2 ,caption = "Count of tweets that mentionned 
+       candidates in California pre- and post- debate.")
 ```
 
 ```{r}
 panderOptions('table.caption.prefix', 'Table 3: ')
-pander(table3 ,caption = "Sentiment Analysis average positivity score pre- and post- debate by candidate.")
+pander(table3 ,caption = "Sentiment Analysis average positivity 
+       score pre- and post- debate by candidate.")
 ```
 
-### Data exploration
-
-Because our project was exploratory in nature, we spent significant time exploring each data source. 
-
-#### Twitter
-
+##### Create functions
 Create a function to tabulate the count and proportion of tweets by candidates. 
 
-##### Create functions
 ```{r, eval=FALSE}
 type_var  <- unlist(map(pre_debate, class))
 
@@ -705,10 +709,10 @@ mutate(Variable = rep(names(vars), vars),
                    ifelse(Variable == "TG", "Gabbard", NA)))))))))))
 ```
 
-A visual of the proportion of tweets pre and post debate
 
 ##### Graphing
-###### Pre-debate number of tweets 
+A visual of the proportion of tweets pre and post debate
+
 
 ```{r, include=FALSE}
 #USE THIS CHUNK TO BRING IN props_tab1, props_tab2, loc_pre_all and loc_post_all 
@@ -752,7 +756,6 @@ props_tab2 %>%
 theme(axis.text.x=element_text(angle=90,hjust=1)) 
 ```
 
-\newpage
 Figure 2 shows the post- debate tweets mentions by candidate. As expected, lot more tweets mentions occured after the debate, about 5 times more than pre- debate. Here we noticed that the ranking change with Harris and Yang in the lead along with Sanders and tweets mentions close to 150,000.       
 
 ###### Tweets location pre-debate 
@@ -860,7 +863,8 @@ All candidates had higher search counts after the debate than before. This makes
 
 For the polling data, we looked at the pre- and post-debate polling numbers for each candidate.
 ```{r, tidy=TRUE, fig.cap="Pre- and Post-debate Polling Data, by Candidate"}
-polling_data$Pre_post <- factor(polling_data$Pre_post, levels = c("Pre-debate", "Post-debate"))
+polling_data$Pre_post <- factor(polling_data$Pre_post, levels = c("Pre-debate", 
+                                                                  "Post-debate"))
 
 polling_data %>%
   group_by(Candidate, Pre_post) %>%
@@ -872,8 +876,6 @@ polling_data %>%
   scale_fill_discrete(name = "Timeframe") +
   theme(axis.text.x = element_text(angle=35))
 ```
-
-
 
 ### Analysis
 
@@ -986,7 +988,7 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 ```
 
-Finally, we examined the relationships between the polling data and the Twitter and Google Trends data post-debate, as well as the relationships between pre- and post-debate changes across data sources.
+Finally, we examined the relationships between the polling data and the Twitter and Google Trends data post-debate, as well as the relationships between pre- and post-debate changes across data sources. We looked at these results for the 5 most popular candidates.
 
 ```{r, tidy=TRUE, fig.cap="Comparison of Post-debate Twitter and Polling Data"}
 graphing_data <- cbind(twitter, poll, gtrends)
@@ -994,67 +996,87 @@ graphing_data %>%
   group_by(Pre_post, Candidate) %>%
   filter(Pre_post=="Post-debate") %>%
   ggplot() +
-  geom_point(mapping = aes(x=Percentage, y=Percentage1, color=Candidate), size=4) +
+  geom_point(mapping = aes(x=Percentage, y=Percentage1, 
+                           color=Candidate), size=4) +
   xlim(0,20) +
   ylim(0,30) +
   labs(x="Twitter Sentiment", 
        y="Polling Data")
 ```
 
+Figure 5 shows that there is no clear relationship between the post-debate twitter sentiment and the polling data. All candidates have similar sentiment scores, regardless of polling percentage.
+
 ```{r, tidy=TRUE, fig.cap="Comparison of Post-debate Google Trends and Polling Data"}
 graphing_data  %>%
   group_by(Pre_post, Candidate) %>%
   filter(Pre_post=="Post-debate") %>%
   ggplot() +
-  geom_point(mapping = aes(x=Percentage2, y=Percentage1, color=Candidate), size=4) +
+  geom_point(mapping = aes(x=Percentage2, y=Percentage1, 
+                           color=Candidate), size=4) +
   xlim(0,100) +
   ylim(0,30) +
   labs(x="Google Trends Data", 
        y="Polling Data")
 ```
 
+In Figure 6, we can see a very slight relationship between the post-debate Google Trends data and polling data, in that candidates polling higher generally had higher Google trends hit rates.
+
 ```{r, tidy=TRUE, fig.cap="Comparison of Changes in Twitter and Polling Data"}
-print(graphing_data)
 pre <-
 graphing_data  %>%
   select(Pre_post, Candidate, Percentage, Percentage1, Percentage2) %>%
-  group_by(Pre_post, Candidate) %>%
+  group_by(Pre_post, Candidate, Data) %>%
   filter(Pre_post=="Pre-debate") %>%
-  mutate(Pre_twitter=Percentage, Pre_polling=Percentage1, Pre_gtrends=Percentage2)
+  mutate(Pre_twitter=Percentage, Pre_polling=Percentage1, 
+         Pre_gtrends=Percentage2)
 
 post <-
   graphing_data  %>%
   select(Pre_post, Candidate, Percentage, Percentage1, Percentage2) %>%
-  group_by(Pre_post, Candidate) %>%
+  group_by(Pre_post, Candidate, Data) %>%
   filter(Pre_post=="Post-debate") %>%
-  mutate(Post_twitter=Percentage, Post_polling=Percentage1, Post_gtrends=Percentage2)
+  mutate(Post_twitter=Percentage, Post_polling=Percentage1, 
+         Post_gtrends=Percentage2)
 
 change_data <- cbind(pre, post)
 
 change_data %>%
   group_by(Pre_post, Candidate) %>%
-  mutate(change_twitter = ((Post_twitter - Pre_twitter) / Pre_twitter) * 100, 
-         change_polling = ((Post_polling - Pre_polling) / Pre_polling) * 100, 
-         change_gtrends = ((Post_gtrends - Pre_gtrends) / Pre_gtrends) * 100) %>%
+  mutate(change_twitter = ((Post_twitter - Pre_twitter) / 
+                             Pre_twitter) * 100, 
+         change_polling = ((Post_polling - Pre_polling) / 
+                             Pre_polling) * 100, 
+         change_gtrends = ((Post_gtrends - Pre_gtrends) / 
+                             Pre_gtrends) * 100) %>%
   ggplot() +
-  geom_point(mapping = aes(x=change_twitter, y=change_polling, color=Candidate), size=4) +
+  geom_point(mapping = aes(x=change_twitter, y=change_polling, 
+                           color=Candidate), size=4) +
   labs(x="Percent Change in Twitter Sentiment", 
        y="Percent Change in Polling Data")
   
 ```
 
+Figure 7 shows the percent change in Twitter sentiment and percent change in vote share between the two time periods (pre- and post-debate). There is no clear relationship between the change in vote share and the change in Twitter sentiment.
+
 ```{r, tidy=TRUE, fig.cap="Comparison of Changes in Google Trends and Polling Data"}
 change_data %>%
   group_by(Pre_post, Candidate) %>%
-  mutate(change_twitter = ((Post_twitter - Pre_twitter) / Pre_twitter) * 100, 
-         change_polling = ((Post_polling - Pre_polling) / Pre_polling) * 100, 
-         change_gtrends = ((Post_gtrends - Pre_gtrends) / Pre_gtrends) * 100) %>%
+  mutate(change_twitter = ((Post_twitter - Pre_twitter) / 
+                             Pre_twitter) * 100, 
+         change_polling = ((Post_polling - Pre_polling) / 
+                             Pre_polling) * 100, 
+         change_gtrends = ((Post_gtrends - Pre_gtrends) / 
+                             Pre_gtrends) * 100) %>%
   ggplot() +
-  geom_point(mapping = aes(x=change_gtrends, y=change_polling, color=Candidate), size=4) +
+  geom_point(mapping = aes(x=change_gtrends, y=change_polling, 
+                           color=Candidate), size=4) +
   labs(x="Percent Change in Google Trends Data", 
        y="Percent Change in Polling Data")
 ```
-When looking at the pre- and post-debate data from each source side-by-side, we can see that, while candidates who are polling higher have higher numbers of tweets and Google searches (for the most part), there is no clear relationship between the post-debate changes in polling numbers and the post-debate changes in Twitter and Google Trends data. Regardless of polling numbers, all candidates had higher Twitter positivity ratings and higher numbers of Google searches post-debate than pre-debate. 
+
+Figure 8 shows the percent change in Google Trends hit rate and percent change in vote share between the two time periods. Again, there is no clear relationship between the change in the two data sources.
+
+In conclusion, when looking at the pre- and post-debate data from each source side-by-side, we can see that, while candidates who are polling higher have higher numbers of tweets and Google searches (for the most part), there is no clear relationship between the post-debate changes in polling numbers and the post-debate changes in Twitter and Google Trends data. Regardless of polling numbers, all candidates had higher Twitter positivity ratings and higher numbers of Google searches post-debate than pre-debate. 
 
 ## Discussion
 
