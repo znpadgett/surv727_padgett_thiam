@@ -1,47 +1,54 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+
 
 library(shiny)
+library(rsconnect)
+library(dplyr)
+library(ggplot2)
+library(repmis)
 
-# Define UI for application that draws a histogram
+
+source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/app_data.RData?raw=true")
+
+
+# Define UI
+
 ui <- fluidPage(
-
+    
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
+    titlePanel("2020 Democratic Primary Candidate Data"),
+    
+    # Sidebar with a dropdown
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            selectInput(inputId = "Candidate",                   
+                        label = "Candidate",                  
+                        choices = c("Joe Biden", "Pete Buttigieg", "Kamala Harris", 
+                                    "Bernie Sanders", "Elizabeth Warren"),                   
+                        selected = "Joe Biden"),
+            selectInput(inputId = "Data",
+                        label = "Data Type",
+                        choices = c("Polling", "GTrends", "Twitter"),
+                        selected = "Polling")
         ),
-
-        # Show a plot of the generated distribution
+        
+        # Show plot
         mainPanel(
-           plotOutput("distPlot")
+            plotOutput(outputId = "graph")      
         )
     )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    
+    output$graph <- renderPlot({
+        all_data %>%
+            filter(Candidate == input$Candidate, Data == input$Data) %>%
+            ggplot() +
+            geom_col(mapping = aes(x=Pre_post, y=Percentage, fill=input$Candidate)) +
+            ylim(0,100) +
+            xlab("Timeframe") + ylab("Percentage") +
+            theme(legend.position = "none")
     })
 }
 

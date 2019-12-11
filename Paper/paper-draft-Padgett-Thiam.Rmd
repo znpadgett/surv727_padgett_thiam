@@ -216,9 +216,7 @@ library(SentimentAnalysis)
 library(GGally)
 library(repmis)
 library(httr)
-library(rsconnect)
 library(pander)
-
 ```
 
 ```{r, message="FALSE", warning=FALSE, results="hide", include=FALSE}
@@ -936,12 +934,13 @@ all_data <- rbind(poll, gtrends, twitter)
 
 all_data$Pre_post <- factor(all_data$Pre_post, levels = c("Pre-debate", 
                                                           "Post-debate"))
+
 ```
 
-Then, we created a shiny app, which can be viewed at https://znpadgett.shinyapps.io/shinyapp/:
+Then, we created a shiny app, which can be viewed at https://znpadgett.shinyapps.io/surv727app/:
 ```{r, eval=FALSE, tidy=TRUE}
 # Define UI
-surv727app <-
+
 ui <- fluidPage(
   
   # Application title
@@ -984,13 +983,6 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-```
-
-```{r, eval=FALSE, include=FALSE}
-#upload shiny app to the web - fake secret
-rsconnect::setAccountInfo(name='znpadgett',
-			  token='DA192A4A3FA4FB169FE8B04D20CA9CEA',
-			  secret='XXXXXXXXXXXXXXXXXXXXXXXXXX')
 ```
 
 Finally, we examined the relationships between the polling data and the Twitter and Google Trends data post-debate, as well as the relationships between pre- and post-debate changes across data sources.
