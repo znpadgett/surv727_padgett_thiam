@@ -220,9 +220,6 @@ library(pander)
 library(rsconnect)
 ```
 
-```{r, message="FALSE", warning=FALSE, results="hide", include=FALSE}
-opts_chunk$set(tidy.opts=list(width=60),tidy=TRUE)
-```
 \newpage
 ## Introduction
 
@@ -257,10 +254,10 @@ create_token(
 Using the search_tweet function in the rtweet package, we will be quering tweets with the specified keywords below. We limited our tweets pull to November 20th and November 21st. The reasonning behind this is to get a sense on how Twitter users feel pre- and post- debate.  
 
 
-```{r, eval=FALSE, tidy=TRUE}
+```{r, eval=FALSE}
 
-dem <- search_tweets("#democrats OR #candidates OR #election2020 OR #BIDEN 
-                     OR #sanders OR #warren OR #harris 
+dem <- search_tweets("#democrats OR #candidates OR #election2020 
+                     OR #BIDEN OR #sanders OR #warren OR #harris 
                      OR #buttigieg OR #steyer OR #yang OR #booker 
                      OR #klobuchar OR #gabbard   
                      OR @KamalaHarris OR @JoeBiden OR @BernieSanders 
@@ -303,36 +300,26 @@ tweets <- rbind(df1, df2)
 
 Next, we seperate the tweets by candidates in order to do analysis at the candidate level. It's important to note that one tweet can be addressed to multiple candidates. In that case, the tweet will be found in the each of those candidates dataset. The code below exemplifies this step of the cleaning process.
 
-```{r, eval=FALSE, tidy=TRUE}
-tweets$BS <-(str_detect(tweets$text, 
-                        regex("#Sanders|@BernieSanders", 
+```{r, eval=FALSE}
+tweets$BS <-(str_detect(tweets$text, regex("#Sanders|@BernieSanders", 
                               ignore_case = TRUE)))
-tweets$KH <-(str_detect(tweets$text, 
-                        regex("#harris |@KamalaHarris",  
+tweets$KH <-(str_detect(tweets$text, regex("#harris |@KamalaHarris",  
                               ignore_case = TRUE)))
-tweets$JB <-(str_detect(tweets$text, 
-                        regex("#biden |@JoeBiden", 
+tweets$JB <-(str_detect(tweets$text, regex("#biden |@JoeBiden", 
                               ignore_case = TRUE)))
-tweets$EW <-(str_detect(tweets$text, 
-                        regex("#warren |@ewarren", 
+tweets$EW <-(str_detect(tweets$text, regex("#warren |@ewarren", 
                               ignore_case = TRUE)))
-tweets$PB <-(str_detect(tweets$text, 
-                        regex("#buttigieg|@PeteButtigieg", 
+tweets$PB <-(str_detect(tweets$text, regex("#buttigieg|@PeteButtigieg", 
                               ignore_case = TRUE)))
-tweets$TS <-(str_detect(tweets$text, 
-                        regex("#steyer | @TomSteyer", 
+tweets$TS <-(str_detect(tweets$text, regex("#steyer | @TomSteyer", 
                               ignore_case = TRUE)))
-tweets$AY <-(str_detect(tweets$text, 
-                        regex("#yang| @AndrewYang", 
+tweets$AY <-(str_detect(tweets$text, regex("#yang| @AndrewYang", 
                               ignore_case = TRUE)))
-tweets$BC <-(str_detect(tweets$text, 
-                        regex("#booker | @BookerCory", 
+tweets$BC <-(str_detect(tweets$text, regex("#booker | @BookerCory", 
                               ignore_case = TRUE)))
-tweets$AK <-(str_detect(tweets$text, 
-                        regex("#klobuchar | @amyklobuchar", 
+tweets$AK <-(str_detect(tweets$text, regex("#klobuchar | @amyklobuchar", 
                               ignore_case = TRUE)))
-tweets$TG <-(str_detect(tweets$text, 
-                        regex("#gabbard |@TulsiGabbard", 
+tweets$TG <-(str_detect(tweets$text, regex("#gabbard |@TulsiGabbard", 
                               ignore_case = TRUE)))
 ```
 
@@ -379,7 +366,7 @@ df2 <- df2 %>%
 ```
 
 All the tweets received before 9 p.m. on November 20th were accounted for in the pre-debate dataset and all tweets from 11 p.m. on November 20th to the next day are in the post-debate dataset. Note that tweets during the debate (9 - 11 p.m.) were removed.
-```{r, eval=FALSE, tidy=TRUE}
+```{r, eval=FALSE}
 pre_debate <- tweets %>%
               filter(date(date) == "2019-11-20" & hour(date) < 21 )
 
@@ -527,7 +514,7 @@ usableText<- iconv(usableText, "UTF-8","ASCII",  sub="byte")
 sentiments_pb_post = analyzeSentiment(as.character(usableText))
 ```
 
-```{r, eval=FALSE, tidy=TRUE}
+```{r, eval=FALSE}
 pre_sent_pos <- data.frame("Candidate" = c("Biden", 
                                            "Sanders", 
                                            "Warren", 
@@ -553,7 +540,7 @@ post_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren",
 ### Google Trends
 This section describes gathering the Google Trends data using the package gtrendsR [@Gtrendscite]. First, we register our Google API key. Then, we pull data for each candidate from the 2 days preceding and two days following the debate (November 18 through 22). We have to pull the data in two separate blocks, because gtrendsR only allows us to use five search terms at a time. We limit the location of searches to the US. Please note that the key here is not a real API key, for security purposes.
 
-```{r, eval=FALSE, tidy=TRUE}
+```{r, eval=FALSE}
 register_google(key = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 res1 <- gtrends(c("Joe Biden", "Bernie Sanders", 
                   "Elizabeth Warren", "Kamala Harris", 
@@ -609,7 +596,7 @@ interest_over_time_all <- rbind(interest_over_time_pre,
 
 Polling data was collected from RealClearPolitics.com, which aggregates weekly polls. We created a dataset using the RealClearPolitics average before and after the November 20 debate. Because the website changes often, and we only needed a small snapshot of the data, it was more efficient to clean the data in Excel and import to R than to use web scraping.
 
-```{r, tidy=TRUE}
+```{r}
 github_link <- "https://github.com/znpadgett/surv727_padgett_thiam/raw/master/Data/Project%20polling%20data.xlsx"
 temp_file <- tempfile(fileext = ".xlsx")
 req <- GET(github_link, 
@@ -835,7 +822,7 @@ We also explored the number of hits pre- and post- debate for each candidate.
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/interest_over_time_all.RData?raw=true")
 ```
 
-```{r, tidy=TRUE, fig.cap="Pre- and Post-debate Google Trends Data, by Candidate"}
+```{r, fig.cap="Pre- and Post-debate Google Trends Data, by Candidate"}
 interest_over_time_all$Pre_post <- factor(interest_over_time_all$Pre_post, 
                                           levels = c("Pre-debate", "Post-debate"))
 
@@ -857,7 +844,7 @@ All candidates had higher search counts after the debate than before. This makes
 #### Polling Data
 
 For the polling data, we looked at the pre- and post-debate polling numbers for each candidate.
-```{r, tidy=TRUE, fig.cap="Pre- and Post-debate Polling Data, by Candidate"}
+```{r, fig.cap="Pre- and Post-debate Polling Data, by Candidate"}
 polling_data$Pre_post <- factor(polling_data$Pre_post, 
 levels = c("Pre-debate", "Post-debate"))
 
@@ -885,7 +872,7 @@ source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data
 source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data/pre_sent_pos.RData?raw=true")
 ```
 
-```{r, tidy=TRUE, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 #clean data
 gtrends <-
   interest_over_time_all %>%
@@ -938,7 +925,7 @@ all_data$Pre_post <- factor(all_data$Pre_post, levels = c("Pre-debate",
 ```
 
 Then, we created a shiny app, which can be viewed at https://znpadgett.shinyapps.io/surv727app/:
-```{r, eval=FALSE, tidy=TRUE}
+```{r, eval=FALSE}
 # Define UI
 
 ui <- fluidPage(
@@ -988,7 +975,7 @@ shinyApp(ui = ui, server = server)
 
 Finally, we examined the relationships between the polling data and the Twitter and Google Trends data post-debate, as well as the relationships between pre- and post-debate changes across data sources. We looked at these results for the 5 most popular candidates.
 
-```{r, tidy=TRUE, fig.cap="Comparison of Post-debate Twitter and Polling Data"}
+```{r, fig.cap="Comparison of Post-debate Twitter and Polling Data"}
 graphing_data <- cbind(twitter, poll, gtrends)
 graphing_data %>%
   group_by(Pre_post, Candidate) %>%
@@ -1004,7 +991,7 @@ graphing_data %>%
 
 Figure 5 shows that there is no clear relationship between the post-debate twitter sentiment and the polling data. All candidates have similar sentiment scores, regardless of polling percentage.
 
-```{r, tidy=TRUE, fig.cap="Comparison of Post-debate Google Trends and Polling Data"}
+```{r, fig.cap="Comparison of Post-debate Google Trends and Polling Data"}
 graphing_data  %>%
   group_by(Pre_post, Candidate) %>%
   filter(Pre_post=="Post-debate") %>%
@@ -1019,7 +1006,7 @@ graphing_data  %>%
 
 In Figure 6, we can see a very slight relationship between the post-debate Google Trends data and polling data, in that candidates polling higher generally had higher Google trends hit rates.
 
-```{r, tidy=TRUE, fig.cap="Comparison of Changes in Twitter and Polling Data"}
+```{r, fig.cap="Comparison of Changes in Twitter and Polling Data"}
 pre <-
 graphing_data  %>%
   select(Pre_post, Candidate, Percentage, Percentage1, Percentage2) %>%
@@ -1056,7 +1043,7 @@ change_data %>%
 
 Figure 7 shows the percent change in Twitter sentiment and percent change in vote share between the two time periods (pre- and post-debate). There is no clear relationship between the change in vote share and the change in Twitter sentiment.
 
-```{r, tidy=TRUE, fig.cap="Comparison of Changes in Google Trends and Polling Data"}
+```{r, fig.cap="Comparison of Changes in Google Trends and Polling Data"}
 change_data %>%
   group_by(Pre_post, Candidate) %>%
   mutate(change_twitter = ((Post_twitter - Pre_twitter) / 
