@@ -238,7 +238,7 @@ All data used to create the tables, figures, and shiny app in this paper can be 
 
 ### Twitter
 
-Using the rtweet package and the search_tweet function, we were able to gather sufficient tweets for our project and seperated in two datasets; pre- and post- debate. The initial dataset contains a little over 1.3 million tweets which was rich enough to proceed with analysis. After removing irrelevant tweets such as tweets containing "Ukraine", we were left with over 1.2 million tweets. This was used to create the pre- and post- debate datasets. The pre-debate dataset has 226,799 tweets and 998,780 tweets for the post-debate dataset. As expected, there was a lot more tweets after the debate than before. We used the  Twitter location field to perform analysis at the state level.However, the location column is an open text and not regulated. We selected severals states such New York, Virginia, New Hampshire, Nevada, Illinois, Iowa, Ohio, California and DC to focus our analysis on. 
+Using the rtweet package [@rtweet] and the search_tweet function, we were able to gather sufficient tweets for our project and seperated in two datasets; pre- and post- debate. The initial dataset contains a little over 1.3 million tweets which was rich enough to proceed with analysis. After removing irrelevant tweets such as tweets containing "Ukraine", we were left with over 1.2 million tweets. This was used to create the pre- and post- debate datasets. The pre-debate dataset has 226,799 tweets and 998,780 tweets for the post-debate dataset. As expected, there was a lot more tweets after the debate than before. We used the  Twitter location field to perform analysis at the state level. However, the location column is an open text and not regulated. We selected severals states such New York, Virginia, New Hampshire, Nevada, Illinois, Iowa, Ohio, California and DC to focus our analysis on. 
 
 Below is our token to access the Twitter API and start collecting tweets. Note that these codes are fake, for security purposes.
 
@@ -267,13 +267,13 @@ dem <- search_tweets("#democrats OR #candidates OR #election2020 OR #BIDEN
                      OR @ewarren OR @PeteButtigieg 
                      OR @TomSteyer OR @AndrewYang OR @BookerCory 
                      OR @amyklobuchar OR @TulsiGabbard ",  since='2019-11-20', 
-                     until='2019-11-21', n= 500000,  
-                     retryonratelimit = TRUE, verbose = TRUE)
+                     until='2019-11-21', n= 500000, 
+    retryonratelimit = TRUE, verbose = TRUE)
 ```
 
 #### Data Cleaning
 
-Even with specified keywords, irrelevants tweets were also made it to the initial dataset mainly with the Ukraine issue at the time of pulling. We removed all tweets that had the word "Ukraine" in order to focus completly on tweets regarding the debate. 
+Even with specified keywords, irrelevants tweets made it to the initial dataset mainly with the Ukraine issue at the time of pulling. We removed all tweets that had the word "Ukraine" in order to focus completly on tweets regarding the debate. 
 
 ```{r, eval=FALSE}
 vars <- c("text", "location", "created_at")
@@ -301,7 +301,7 @@ df2 <- df2 %>%
 tweets <- rbind(df1, df2)
 ```
 
-Next, we seperate the tweets by candidates in order to do analysis at the candidate level. It's important to note that one tweets can be addressed to multiple candidates. In that case, the tweet will be found in the each of those candidates dataset. The code below exemplifies this step of the cleaning process.
+Next, we seperate the tweets by candidates in order to do analysis at the candidate level. It's important to note that one tweet can be addressed to multiple candidates. In that case, the tweet will be found in the each of those candidates dataset. The code below exemplifies this step of the cleaning process.
 
 ```{r, eval=FALSE, tidy=TRUE}
 tweets$BS <-(str_detect(tweets$text, 
@@ -365,13 +365,16 @@ df2$TG <-(str_detect(df2$text, regex("#gabbard |@TulsiGabbard", ignore_case = TR
 Here we reformat the created_at column as a date & time variable in order to seperate the tweets in two groups : pre- and post- debate.
 ```{r, eval=FALSE}
 tweets <- tweets %>%
-  mutate( date= as.POSIXct(created_at, tryFormats = c("%Y-%m-%d %H:%M:%OS")))
+  mutate( date= as.POSIXct(created_at, 
+  tryFormats = c("%Y-%m-%d %H:%M:%OS")))
 
 df1 <- df1 %>%
-    mutate( date= as.POSIXct(created_at, tryFormats = c("%Y-%m-%d %H:%M:%OS")))
+    mutate( date= as.POSIXct(created_at, 
+    tryFormats = c("%Y-%m-%d %H:%M:%OS")))
 
 df2 <- df2 %>%
-    mutate( date= as.POSIXct(created_at, tryFormats = c("%Y-%m-%d %H:%M:%OS")))
+    mutate( date= as.POSIXct(created_at, 
+    tryFormats = c("%Y-%m-%d %H:%M:%OS")))
 
 ```
 
@@ -390,9 +393,9 @@ post_debate <- post_debate %>% select(-date, -created_at)
 ```
 
 #### Sentiment Analysis
-Sentiment analysis of the tweets will not be performed for all candidates but only 5 : Harris, Sanders, Biden, Warren & Buttigieg.
+Sentiment analysis of the tweets will not be performed for all candidates but five selected candidates; Harris, Sanders, Biden, Warren & Buttigieg.
 
-First we need to prep the tweets by removing all non-words such as emojis and use the sentiment analysis package for analysis. Althought the sentiment analysis package uses 5 dictionnairies, we will only look at the results from the GI dictionnary. For the pre-debate tweets sentiment analysis, we used all the tweets from the dataset. However, for the post-debate sentiment analysis we sampled from the dataset due to volume and space issue. The code below exemplifies this process. The sample size for each candidate post-debate dataset is the same as the pre-debate number of tweets for consistency. For instance, the pre-debate dataset for Sanders had 31,603 tweets, the sample size for the post-debate dataset for Sanders was 31,603.     
+First, we need to arrange the tweets by removing all non-words such as emojis and use the sentiment analysis package [@sentiment] for analysis. Althought the sentiment analysis package uses 5 dictionnairies, we will only look at the results from the GI dictionnary. For the pre-debate tweets sentiment analysis, we used all the tweets from the dataset. However, for the post-debate sentiment analysis we sampled from the dataset due to volume and space issue. The code below exemplifies this process. The sample size for each candidate post-debate dataset is the same as the pre-debate number of tweets for consistency. For instance, the pre-debate dataset for Sanders had 31,603 tweets, the sample size for the post-debate dataset for Sanders was 31,603.     
 ```{r, eval=FALSE}
 bs <- pre_debate %>%
       filter (BS == "TRUE")
@@ -530,19 +533,19 @@ pre_sent_pos <- data.frame("Candidate" = c("Biden",
                                            "Warren", 
                                            "Harris", 
                                            "Buttigieg"), 
-                       "Positive" =c((sum(sentiments_jb$PositivityGI))/27477,
-                                      (sum(sentiments_bs$PositivityGI))/31603,                                                                  (sum(sentiments_ew$PositivityGI))/18628,
-                                     (sum(sentiments_kh$PositivityGI))/16362,
-                                      (sum(sentiments_pb$PositivityGI))/27242))
+ "Positive" =c((sum(sentiments_jb$PositivityGI))/27477,
+(sum(sentiments_bs$PositivityGI))/31603,                                                                    (sum(sentiments_ew$PositivityGI))/18628,
+(sum(sentiments_kh$PositivityGI))/16362,
+(sum(sentiments_pb$PositivityGI))/27242))
 ```
 
 ```{r, eval=FALSE, include=FALSE}
 post_sent_pos <- data.frame("Candidate" = c("Biden", "Sanders", "Warren", 
                                             "Harris", "Buttigieg"), 
-                       "Positive" =c((sum(sentiments_jb_post$PositivityGI))/27477,
-                                      (sum(sentiments_bs_post$PositivityGI))/31603,                                                             (sum(sentiments_ew_post$PositivityGI))/18628,
-                                     (sum(sentiments_kh_post$PositivityGI))/16362,
-                                      (sum(sentiments_pb_post$PositivityGI))/27242))
+"Positive" =c((sum(sentiments_jb_post$PositivityGI))/27477,
+(sum(sentiments_bs_post$PositivityGI))/31603,                                                             (sum(sentiments_ew_post$PositivityGI))/18628,
+(sum(sentiments_kh_post$PositivityGI))/16362,
+(sum(sentiments_pb_post$PositivityGI))/27242))
 ```
 
 
@@ -555,11 +558,11 @@ register_google(key = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 res1 <- gtrends(c("Joe Biden", "Bernie Sanders", 
                   "Elizabeth Warren", "Kamala Harris", 
                   "Pete Buttigieg"), geo = "US", 
-                time = "2019-11-18 2019-11-22", low_search_volume = T)
+time = "2019-11-18 2019-11-22", low_search_volume = T)
 
 res2 <- gtrends(c("Tom Steyer", "Andrew Yang", "Cory Booker", 
                   "Amy Klobuchar", "Tulsi Gabbard"), geo = "US", 
-                time = "2019-11-18 2019-11-22", low_search_volume = T)
+time = "2019-11-18 2019-11-22", low_search_volume = T)
 ```
 
 #### Geocoding
@@ -598,7 +601,8 @@ interest_over_time_post <-
   filter(date > "2019-11-20") %>%
   mutate(Pre_post="Post-debate")
 
-interest_over_time_all <- rbind(interest_over_time_pre, interest_over_time_post)
+interest_over_time_all <- rbind(interest_over_time_pre, 
+                              interest_over_time_post)
 ```
 
 ### Polls
@@ -653,11 +657,9 @@ Create a function to tabulate the count and proportion of tweets by candidates.
 type_var  <- unlist(map(pre_debate, class))
 
 freq_tab <- function(x) {
-# make table with count and frequency
 tab <- cbind(Count = table(x, useNA = "ifany"),
 Prop = round(prop.table(table(x, useNA = "ifany")),
 2))
-# get the categories as variable and rearrenge
 tab <- as.data.frame(tab) %>%
 tbl_df() %>%
 mutate(Cat = row.names(tab)) %>%
@@ -711,7 +713,7 @@ mutate(Variable = rep(names(vars), vars),
 
 
 ##### Graphing
-A visual of the proportion of tweets pre and post debate
+A visual of the proportion of tweets pre- and post- debate
 
 
 ```{r, include=FALSE}
@@ -729,14 +731,12 @@ source_data("https://github.com/znpadgett/surv727_padgett_thiam/blob/master/Data
 props_tab1 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
-  geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
+  geom_col(mapping = aes(x = reorder(Candidate, -Count), 
+  y=Count, fill = Candidate)) +
     labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
-           caption = "Source: Twitter
-       
-                                 Figure 1") +
+           caption = "Source: Twitter") +
 theme(axis.text.x=element_text(angle=90,hjust=1)) 
-
 ```
 Figure 1 shows the number of tweets that mentioned each candidate before the debate. We noticed that Sanders, Biden and Buttigieg are in the lead with over 25,000 tweets mentions. 
 
@@ -746,13 +746,12 @@ Figure 1 shows the number of tweets that mentioned each candidate before the deb
 props_tab2 %>%
   filter(Cat == "TRUE") %>%
   ggplot() +
-  geom_col(mapping = aes(x = reorder(Candidate, -Count), y=Count, fill = Candidate)) +
+  geom_col(mapping = aes(x = reorder(Candidate, -Count),
+  y=Count, fill = Candidate)) +
     labs(x = "Democratic Party Candidates", 
        y = "Number of Tweets", 
        title = "Post Debate candidates mentions in Tweets", 
-            caption = "Source: Twitter
-       
-                                 Figure 2") +
+            caption = "Source: Twitter") +
 theme(axis.text.x=element_text(angle=90,hjust=1)) 
 ```
 
@@ -766,16 +765,13 @@ Figure 2 shows the post- debate tweets mentions by candidate. As expected, lot m
   group_by(Candidate, Location) %>%
   summarise(total = n()) %>%
   ggplot() +
-  geom_col(mapping = aes(x = reorder(Candidate, -total), y=total, fill = Location)) +
+  geom_col(mapping = aes(x = reorder(Candidate, -total), 
+  y=total, fill = Location)) +
     labs(x = "Democratic Party Canditates", 
        y = "Number of Tweets", 
        title = "Pre Debate candidates mentions in Tweets by location", 
-             caption = "Source: Twitter
-       
-                                 Figure 3") +
-           theme(axis.text.x=element_text(angle=90,hjust=1)) 
-
-      
+             caption = "Source: Twitter") +
+           theme(axis.text.x=element_text(angle=90,hjust=1))      
 ```
 Figure 3 shows the number of tweets mentions by candidate by location pre- debate. Here we notice that Buttigieg, Sanders and Yang get the most tweets mentions and mainly coming from California and New York for all 3 candidates. These results are not surprising with California and New York population presence in Twitter. 
 
@@ -788,13 +784,12 @@ Figure 3 shows the number of tweets mentions by candidate by location pre- debat
   group_by(Candidate, Location) %>%
   summarise(total = n()) %>%
   ggplot() +
-  geom_col(mapping = aes(x = reorder(Candidate, -total), y=total, fill = Location)) +
+  geom_col(mapping = aes(x = reorder(Candidate, -total), 
+  y=total, fill = Location)) +
     labs(x = "Democratic Party Canditates", 
        y = "Number of Tweets", 
        title = "Post Debate candidates mentions in Tweets by location", 
-              caption = "Source: Twitter
-       
-                                 Figure 4") +
+              caption = "Source: Twitter") +
 theme(axis.text.x=element_text(angle=90,hjust=1)) 
 ```
 Figure 4 is the post- debate tweets mentions by candidate by location. Just like in Figure 3 (pre-debate analysis) California and New York had the most users tweeting about the candidates.Harris, Yang and Sanders are mostly mentionned in tweets by users. 
@@ -849,7 +844,7 @@ interest_over_time_all %>%
   summarise(avg_hits=mean(hits)) %>%
   ggplot() +
   geom_col(mapping = aes(x=reorder(keyword, -avg_hits), 
-                         y=avg_hits, fill=Pre_post), color="black", 
+             y=avg_hits, fill=Pre_post), color="black", 
            position="dodge") +
   xlab("Candidate") + ylab("Hits") +
   scale_fill_discrete(name = "Timeframe") +
@@ -863,15 +858,16 @@ All candidates had higher search counts after the debate than before. This makes
 
 For the polling data, we looked at the pre- and post-debate polling numbers for each candidate.
 ```{r, tidy=TRUE, fig.cap="Pre- and Post-debate Polling Data, by Candidate"}
-polling_data$Pre_post <- factor(polling_data$Pre_post, levels = c("Pre-debate", 
-                                                                  "Post-debate"))
+polling_data$Pre_post <- factor(polling_data$Pre_post, 
+levels = c("Pre-debate", "Post-debate"))
 
 polling_data %>%
   group_by(Candidate, Pre_post) %>%
   filter(Candidate!="Bennet", Candidate!="Bloomberg") %>%
   ggplot() +
-    geom_col(mapping = aes(x=reorder(Candidate, -Percentage), y=Percentage, 
-                           fill=Pre_post), color="black",   position="dodge") +
+    geom_col(mapping = aes(x=reorder(Candidate, -Percentage)
+    , y=Percentage, fill=Pre_post), color="black", 
+    position="dodge") +
   xlab("Candidate") + ylab("Percentage") +
   scale_fill_discrete(name = "Timeframe") +
   theme(axis.text.x = element_text(angle=35))
@@ -916,15 +912,16 @@ twitter_data <- data.frame("Candidate" = c("Joe Biden", "Bernie Sanders",
                                            "Pete Buttigieg", "Joe Biden", 
                                            "Bernie Sanders", "Elizabeth Warren", 
                                            "Kamala Harris", "Pete Buttigieg"),                            
-                           "Pre_post" =c("Pre-debate","Pre-debate",
-                                         "Pre-debate","Pre-debate","Pre-debate",                            "Post-debate","Post-debate","Post-debate","Post-debate","Post-debate"),
+                           "Pre_post" =c("Pre-debate","Pre-debate", "Pre-debate",
+                           "Pre-debate","Pre-debate","Post-debate","Post-debate",
+                           "Post-debate","Post-debate","Post-debate"),
                    "Data" = c("Twitter", "Twitter","Twitter","Twitter","Twitter",
                               "Twitter","Twitter","Twitter","Twitter","Twitter"), 
-                  "Percentage"=c(pre_sent_pos$Positive[1],pre_sent_pos$Positive[2],
-                              pre_sent_pos$Positive[3],pre_sent_pos$Positive[4],
-                              pre_sent_pos$Positive[5],post_sent_pos$Positive[1],
-                              post_sent_pos$Positive[2],post_sent_pos$Positive[3],
-                              post_sent_pos$Positive[4],post_sent_pos$Positive[5]))
+ "Percentage"=c(pre_sent_pos$Positive[1],pre_sent_pos$Positive[2],
+  pre_sent_pos$Positive[3],pre_sent_pos$Positive[4],
+  pre_sent_pos$Positive[5],post_sent_pos$Positive[1],
+  post_sent_pos$Positive[2],post_sent_pos$Positive[3],
+  post_sent_pos$Positive[4],post_sent_pos$Positive[5]))
 
 twitter <- as_tibble(twitter_data)
 twitter <-
@@ -977,7 +974,8 @@ server <- function(input, output) {
     all_data %>%
       filter(Candidate == input$Candidate, Data == input$Data) %>%
       ggplot() +
-      geom_col(mapping = aes(x=Pre_post, y=Percentage, fill=input$Candidate)) +
+      geom_col(mapping = aes(x=Pre_post, y=Percentage, 
+      fill=input$Candidate)) +
       ylim(0,100) +
       xlab("Timeframe") + ylab("Percentage") +
       theme(legend.position = "none")
